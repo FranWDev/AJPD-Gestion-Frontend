@@ -1,23 +1,42 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { AuthService } from '../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  template: `
-    <div class="login-container">
-      <h1>AJPD Gestión de Miembros</h1>
-      <p>Inicializando pantalla de login...</p>
-    </div>
-  `,
-  styles: [`
-    .login-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background-color: var(--color-background);
-    }
-  `]
+  imports: [FormsModule],
+  templateUrl: './login.html',
+  styleUrl: './login.css'
 })
-export class LoginComponent {}
+export class LoginComponent {
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
+
+  accessKey = '';
+  isLoading = signal(false);
+  errorMessage = signal<string | null>(null);
+
+  onSubmit(): void {
+    if (!this.accessKey) return;
+
+    this.isLoading.set(true);
+    this.errorMessage.set(null);
+
+    this.authService.login(this.accessKey).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.router.navigate(['/']);
+      },
+      error: (err) => {
+        this.isLoading.set(false);
+        if (err.status === 401) {
+          this.errorMessage.set('La clave de acceso introducida es incorrecta.');
+        } else {
+          this.errorMessage.set('Error de conexión con el servidor. Inténtalo de nuevo.');
+        }
+      }
+    });
+  }
+}
