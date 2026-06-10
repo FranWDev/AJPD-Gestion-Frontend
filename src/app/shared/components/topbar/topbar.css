@@ -1,0 +1,113 @@
+:host {
+  display: block;
+}
+
+/* === Contenedor === */
+.topbar {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 0 24px 0 16px;
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* === Boton hamburguesa (solo movil) === */
+.topbar-menu-btn {
+  width: 40px;
+  height: 40px;
+  display: none; /* oculto por defecto en desktop */
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.topbar-menu-btn:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.topbar-menu-btn svg {
+  width: 22px;
+  height: 22px;
+}
+
+@media (max-width: 767px) {
+  .topbar-menu-btn {
+    display: flex;
+  }
+}
+
+/* === Titulo de seccion === */
+.topbar-title {
+  flex: 1;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* === Acciones de la derecha === */
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* === Boton de logout === */
+.topbar-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.topbar-logout-btn:hover {
+  background-color: #fce8e6;
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.topbar-logout-btn svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Ocultar texto en pantallas pequenas */
+@media (max-width: 480px) {
+  .logout-label { display: none; }
+
+  .topbar-logout-btn {
+    padding: 8px;
+    border-radius: var(--radius-full);
+  }
+}

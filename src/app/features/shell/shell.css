@@ -1,0 +1,131 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+/* ==============================
+   LAYOUT PRINCIPAL
+============================== */
+.shell {
+  display: flex;
+  min-height: 100vh;
+  --sidebar-width: 240px;
+  --sidebar-collapsed-width: 64px;
+}
+
+/* ==============================
+   SIDEBAR (ESCRITORIO)
+============================== */
+.shell-sidebar {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  transition: width var(--transition-normal);
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  z-index: 100;
+}
+
+.shell.sidebar-collapsed .shell-sidebar {
+  width: var(--sidebar-collapsed-width);
+}
+
+/* ==============================
+   AREA PRINCIPAL
+============================== */
+.shell-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-background);
+}
+
+/* ==============================
+   CONTENIDO DE LA PAGINA
+============================== */
+.shell-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px 32px;
+}
+
+.content-wrapper {
+  max-width: 1280px;
+  animation: contentFadeIn 0.2s ease forwards;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==============================
+   MOVIL (< 768px)
+============================== */
+@media (max-width: 767px) {
+  /* El sidebar sale del flujo y se convierte en drawer */
+  .shell-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--sidebar-width) !important;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+  }
+
+  .shell-sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  /* El main ocupa todo el ancho */
+  .shell-main {
+    width: 100%;
+  }
+
+  .shell-content {
+    padding: 20px 16px;
+  }
+
+  /* Backdrop oscuro */
+  .mobile-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+    z-index: 999;
+    animation: backdropFadeIn 0.2s ease forwards;
+  }
+
+  @keyframes backdropFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+}
+
+/* ==============================
+   SCROLLBAR PERSONALIZADO (contenido)
+============================== */
+.shell-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.shell-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.shell-content::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+.shell-content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
+}

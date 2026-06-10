@@ -1,0 +1,27 @@
+<div class="shell" [class.sidebar-collapsed]="layoutService.sidebarCollapsed()">
+
+  <!-- Backdrop movil -->
+  @if (layoutService.mobileDrawerOpen()) {
+    <div
+      class="mobile-backdrop"
+      (click)="layoutService.closeMobileDrawer()"
+      aria-hidden="true"
+    ></div>
+  }
+
+  <!-- Sidebar -->
+  <aside class="shell-sidebar" [class.mobile-open]="layoutService.mobileDrawerOpen()">
+    <app-sidebar></app-sidebar>
+  </aside>
+
+  <!-- Area principal -->
+  <div class="shell-main">
+    <app-topbar></app-topbar>
+    <main class="shell-content">
+      <div class="content-wrapper">
+        <router-outlet></router-outlet>
+      </div>
+    </main>
+  </div>
+
+</div>
