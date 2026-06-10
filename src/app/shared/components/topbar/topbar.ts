@@ -1,16 +1,8 @@
-import { Component, computed, inject } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { filter, map } from 'rxjs';
+import { Component, inject } from '@angular/core';
+import { Router } from '@angular/router';
 import { LayoutService } from '../../../core/services/layout.service';
 import { AuthService } from '../../../core/services/auth.service';
-
-const ROUTE_TITLES: Record<string, string> = {
-  '/miembros': 'Miembros',
-  '/historial': 'Historial de Cargos',
-  '/maestros/centros': 'Centros',
-  '/maestros/cargos': 'Cargos',
-};
+import { ModalConfirmService } from '../modal-confirm/modal-confirm.service';
 
 @Component({
   selector: 'app-topbar',
@@ -22,23 +14,19 @@ const ROUTE_TITLES: Record<string, string> = {
 export class TopBarComponent {
   protected readonly layoutService = inject(LayoutService);
   private readonly authService = inject(AuthService);
+  private readonly modalConfirm = inject(ModalConfirmService);
   private readonly router = inject(Router);
 
-  private readonly currentUrl = toSignal(
-    this.router.events.pipe(
-      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-      map(e => e.urlAfterRedirects)
-    ),
-    { initialValue: this.router.url }
-  );
-
-  protected readonly activeTitle = computed(() => {
-    const url = this.currentUrl();
-    return ROUTE_TITLES[url] ?? 'Panel';
-  });
-
   protected logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    this.modalConfirm.open({
+      titulo: 'Cerrar sesión',
+      mensaje: '¿Estás seguro de que deseas cerrar tu sesión en la aplicación?',
+      tipo: 'warning',
+      labelConfirmar: 'Cerrar sesión',
+      onConfirmar: () => {
+        this.authService.logout();
+        this.router.navigate(['/login']);
+      },
+    });
   }
 }

@@ -1,0 +1,113 @@
+@if (svc.isOpen()) {
+  <div class="modal-backdrop" (click)="svc.cerrar()" aria-hidden="true"></div>
+
+  <div class="modal-container" role="dialog" aria-modal="true">
+    <div class="modal-box" [class.modal-box--baja]="svc.miembro()?.fechaBaja">
+
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <h2 class="modal-title">{{ svc.miembro()?.nombreRazonSocial }}</h2>
+          @if (svc.miembro()?.fechaBaja) {
+            <span class="badge badge--baja">Baja</span>
+          } @else {
+            <span class="badge badge--activo">Activo</span>
+          }
+        </div>
+      </div>
+
+      <!-- Cuerpo -->
+      <div class="modal-body">
+        <div class="detail-grid">
+
+          <div class="detail-item">
+            <span class="detail-label">NIF / CIF</span>
+            <span class="detail-value">{{ svc.miembro()?.nifCif || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Nacionalidad</span>
+            <span class="detail-value">{{ svc.miembro()?.nacionalidad || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Fecha de nacimiento</span>
+            <span class="detail-value">{{ svc.miembro()?.fechaNacimiento || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Domicilio</span>
+            <span class="detail-value">{{ svc.miembro()?.domicilio || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Telefono</span>
+            <span class="detail-value">
+              @if (svc.miembro()?.telefono) {
+                <a [href]="'tel:' + svc.miembro()?.telefono">{{ svc.miembro()?.telefono }}</a>
+              } @else {
+                —
+              }
+            </span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Correo</span>
+            <span class="detail-value">
+              @if (svc.miembro()?.correo) {
+                <a [href]="'mailto:' + svc.miembro()?.correo">{{ svc.miembro()?.correo }}</a>
+              } @else {
+                —
+              }
+            </span>
+          </div>
+          @if (svc.miembro()?.enlaceWhatsapp) {
+            <div class="detail-item">
+              <span class="detail-label">Enlace WhatsApp</span>
+              <span class="detail-value">
+                <a [href]="svc.miembro()?.enlaceWhatsapp" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 6px; color: #25D366; font-weight: 500;">
+                  <svg viewBox="0 0 24 24" fill="currentColor" style="width: 16px; height: 16px;">
+                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946C.06 5.348 5.397.01 12.008.01c3.202.001 6.212 1.246 8.477 3.514 2.266 2.268 3.507 5.28 3.505 8.484-.004 6.657-5.34 11.997-11.953 11.997-2.005-.001-3.973-.5-5.729-1.455L0 24zm6.59-4.846c1.6.95 3.188 1.449 4.825 1.451 5.436 0 9.86-4.37 9.864-9.799.002-2.63-1.023-5.101-2.885-6.97C16.59 1.966 14.12 1.002 11.5 1.002c-5.45 0-9.878 4.373-9.882 9.8-.001 1.742.493 3.448 1.429 4.93L2.07 21.919l6.577-1.765z"/>
+                  </svg>
+                  WhatsApp
+                </a>
+              </span>
+            </div>
+          }
+          <div class="detail-item">
+            <span class="detail-label">Centro</span>
+            <span class="detail-value">{{ svc.miembro()?.centro?.nombre || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Cargo actual</span>
+            <span class="detail-value">{{ svc.miembro()?.cargo?.nombre || '—' }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">Fecha de alta</span>
+            <span class="detail-value">{{ svc.miembro()?.fechaAlta || '—' }}</span>
+          </div>
+          @if (svc.miembro()?.fechaBaja) {
+            <div class="detail-item">
+              <span class="detail-label">Fecha de baja</span>
+              <span class="detail-value detail-value--baja">{{ svc.miembro()?.fechaBaja }}</span>
+            </div>
+          }
+          @if (svc.miembro()?.observaciones) {
+            <div class="detail-item detail-item--full">
+              <span class="detail-label">Observaciones</span>
+              <span class="detail-value">{{ svc.miembro()?.observaciones }}</span>
+            </div>
+          }
+
+        </div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="modal-actions">
+        <button class="btn btn-ghost" type="button" (click)="svc.cerrar()">Cerrar</button>
+        <button class="btn btn-primary" type="button" (click)="editar()" id="modal-detail-editar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px">
+            <path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
+          </svg>
+          Editar
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

@@ -1,0 +1,330 @@
+<div class="miembros-page">
+  <!-- Cabecera de la página -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Miembros</h1>
+      <p class="page-subtitle">Gestión y administración de miembros registrados en la asociación</p>
+    </div>
+    <button class="btn btn-primary" type="button" (click)="abrirNuevo()" id="miembros-nuevo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      Nuevo miembro
+    </button>
+  </div>
+
+  <!-- Contenedor de Filtros -->
+  <div class="filters-card">
+    <div class="filters-header">
+      <!-- Búsqueda global prominente -->
+      <div class="filter-search">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+        </svg>
+        <input id="miembros-buscar" class="filter-input filter-input--search" type="search"
+          placeholder="Buscar miembro por nombre, correo, NIF..." [value]="filtros().buscar ?? ''"
+          (input)="onBuscarChange($any($event.target).value)" />
+      </div>
+
+      <!-- Botón Limpiar condicional -->
+      @if (tieneFiltrosActivos()) {
+      <button class="btn btn-ghost btn-sm btn-clear" type="button" (click)="limpiarFiltros()" id="miembros-limpiar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M6 18 18 6M6 6l12 12" />
+        </svg>
+        Limpiar filtros
+      </button>
+      }
+    </div>
+
+    <!-- Grid de filtros selectores -->
+    <div class="filters-grid">
+      <!-- Estado -->
+      <div class="filter-field">
+        <label for="miembros-estado" class="filter-label">Estado</label>
+        <select id="miembros-estado" class="filter-input filter-select"
+          (change)="aplicarFiltro('filtroBaja', $any($event.target).value)">
+          <option value="TODOS" [selected]="(filtros().filtroBaja ?? 'TODOS') === 'TODOS'">Todos los estados</option>
+          <option value="ACTIVO" [selected]="filtros().filtroBaja === 'ACTIVO'">Activos</option>
+          <option value="BAJA" [selected]="filtros().filtroBaja === 'BAJA'">De baja</option>
+        </select>
+      </div>
+
+      <!-- Centro -->
+      <div class="filter-field">
+        <label for="miembros-centro" class="filter-label">Centro</label>
+        <select id="miembros-centro" class="filter-input filter-select"
+          (change)="aplicarFiltro('centroId', $any($event.target).value ? +$any($event.target).value : undefined)">
+          <option value="" [selected]="!filtros().centroId">Todos los centros</option>
+          @for (c of centros(); track c.id) {
+          <option [value]="c.id" [selected]="filtros().centroId === c.id">{{ c.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Cargo -->
+      <div class="filter-field">
+        <label for="miembros-cargo" class="filter-label">Cargo</label>
+        <select id="miembros-cargo" class="filter-input filter-select"
+          (change)="aplicarFiltro('cargoId', $any($event.target).value ? +$any($event.target).value : undefined)">
+          <option value="" [selected]="!filtros().cargoId">Todos los cargos</option>
+          @for (c of cargos(); track c.id) {
+          <option [value]="c.id" [selected]="filtros().cargoId === c.id">{{ c.nombre }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Nacionalidad -->
+      <div class="filter-field">
+        <label for="miembros-nacionalidad" class="filter-label">Nacionalidad</label>
+        <select id="miembros-nacionalidad" class="filter-input filter-select"
+          (change)="aplicarFiltro('nacionalidad', $any($event.target).value)">
+          <option value="" [selected]="!filtros().nacionalidad">Todas las nacionalidades</option>
+          @for (nac of nacionalidades; track nac) {
+          <option [value]="nac" [selected]="filtros().nacionalidad === nac">{{ nac }}</option>
+          }
+        </select>
+      </div>
+
+      <!-- Fechas de alta -->
+      <div class="filter-field">
+        <label class="filter-label">Fecha de alta</label>
+        <div class="filter-daterange">
+          <input id="miembros-alta-desde" class="filter-input filter-date" type="date" title="Alta desde"
+            [value]="filtros().fechaAltaDesde ?? ''"
+            (change)="aplicarFiltro('fechaAltaDesde', $any($event.target).value)" />
+          <span class="daterange-sep">—</span>
+          <input id="miembros-alta-hasta" class="filter-input filter-date" type="date" title="Alta hasta"
+            [value]="filtros().fechaAltaHasta ?? ''"
+            (change)="aplicarFiltro('fechaAltaHasta', $any($event.target).value)" />
+        </div>
+      </div>
+
+      <!-- Fechas de baja (solo visible si procede) -->
+      @if (mostrarFiltrosFecha()) {
+      <div class="filter-field">
+        <label class="filter-label">Fecha de baja</label>
+        <div class="filter-daterange">
+          <input id="miembros-baja-desde" class="filter-input filter-date" type="date" title="Baja desde"
+            [value]="filtros().fechaBajaDesde ?? ''"
+            (change)="aplicarFiltro('fechaBajaDesde', $any($event.target).value)" />
+          <span class="daterange-sep">—</span>
+          <input id="miembros-baja-hasta" class="filter-input filter-date" type="date" title="Baja hasta"
+            [value]="filtros().fechaBajaHasta ?? ''"
+            (change)="aplicarFiltro('fechaBajaHasta', $any($event.target).value)" />
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+
+  <!-- ======================================
+       ESTADO: CARGANDO
+  ======================================= -->
+  @if (cargando()) {
+  <div class="state-loading">
+    <div class="spinner-large"></div>
+    <p>Cargando miembros...</p>
+  </div>
+  }
+
+  <!-- ======================================
+       TABLA DESKTOP
+  ======================================= -->
+  @if (!cargando() && datos()) {
+  @if (datos()!.content.length === 0) {
+  <div class="state-empty">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+      stroke-linejoin="round">
+      <path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0" />
+    </svg>
+    <p>No se encontraron miembros con los filtros aplicados.</p>
+    <button class="btn btn-ghost" (click)="limpiarFiltros()">Limpiar filtros</button>
+  </div>
+  } @else {
+
+  <!-- Tabla (desktop) -->
+  <div class="table-wrapper">
+    <table class="miembros-table">
+      <thead>
+        <tr>
+          <th class="th-sortable" (click)="ordenarPor('nombreRazonSocial')">
+            Nombre
+            <span class="sort-icon" [class.active]="iconoSort('nombreRazonSocial')">
+              @if (iconoSort('nombreRazonSocial') === 'asc') { ↑ }
+              @else if (iconoSort('nombreRazonSocial') === 'desc') { ↓ }
+              @else { ↕ }
+            </span>
+          </th>
+          <th>Centro</th>
+          <th>Cargo</th>
+          <th class="th-sortable" (click)="ordenarPor('fechaAlta')">
+            Alta
+            <span class="sort-icon" [class.active]="iconoSort('fechaAlta')">
+              @if (iconoSort('fechaAlta') === 'asc') { ↑ }
+              @else if (iconoSort('fechaAlta') === 'desc') { ↓ }
+              @else { ↕ }
+            </span>
+          </th>
+          <th>Estado</th>
+          <th class="th-acciones">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (m of datos()!.content; track m.id) {
+        <tr [class.row--baja]="esBaja(m)">
+          <td class="td-nombre">
+            <button class="nombre-btn" (click)="verDetalle(m)" type="button">
+              {{ m.nombreRazonSocial }}
+            </button>
+          </td>
+          <td>{{ m.centro?.nombre ?? '—' }}</td>
+          <td>{{ m.cargo?.nombre ?? '—' }}</td>
+          <td class="td-fecha">{{ m.fechaAlta ?? '—' }}</td>
+          <td>
+            @if (esBaja(m)) {
+            <span class="badge badge--baja">Baja</span>
+            } @else {
+            <span class="badge badge--activo">Activo</span>
+            }
+          </td>
+          <td class="td-acciones">
+            <!-- Editar -->
+            <button class="action-btn" type="button" (click)="editar(m)" title="Editar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                  d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
+              </svg>
+            </button>
+
+            <!-- Documentos -->
+            <button class="action-btn" type="button" (click)="verDocumentos(m)" title="Documentos">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                  d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+              </svg>
+            </button>
+
+            <!-- Historial -->
+            <button class="action-btn" type="button" (click)="verHistorial(m)" title="Historial de cargos">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+              </svg>
+            </button>
+
+            <!-- Dar de baja (solo si activo) -->
+            @if (!esBaja(m)) {
+            <button class="action-btn action-btn--warning" type="button" (click)="darDeBaja(m)" title="Dar de baja">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                  d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+              </svg>
+            </button>
+            }
+
+            <!-- Revertir baja (solo si de baja) -->
+            @if (esBaja(m)) {
+            <button class="action-btn action-btn--info" type="button" (click)="revertirBaja(m)" title="Revertir baja">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                  d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+              </svg>
+            </button>
+
+            <!-- Eliminar (solo si de baja) -->
+            <button class="action-btn action-btn--danger" type="button" (click)="eliminar(m)"
+              title="Eliminar definitivamente">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                  d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+              </svg>
+            </button>
+            }
+
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Vista MOVIL: cards -->
+  <div class="cards-list">
+    @for (m of datos()!.content; track m.id) {
+    <div class="member-card" [class.member-card--baja]="esBaja(m)">
+      <div class="card-header">
+        <div class="card-info">
+          <p class="card-name">{{ m.nombreRazonSocial }}</p>
+          <p class="card-sub">{{ m.cargo?.nombre ?? '—' }} · {{ m.centro?.nombre ?? '—' }}</p>
+        </div>
+        @if (esBaja(m)) {
+        <span class="badge badge--baja">Baja</span>
+        } @else {
+        <span class="badge badge--activo">Activo</span>
+        }
+      </div>
+      <div class="card-actions">
+        <button class="btn btn-ghost btn-sm" (click)="verDetalle(m)">Ver detalle</button>
+        <button class="btn btn-ghost btn-sm" (click)="editar(m)">Editar</button>
+      </div>
+    </div>
+    }
+  </div>
+
+  <!-- ======================================
+           PAGINACION
+      ======================================= -->
+  <div class="pagination">
+    <div class="pagination-info">
+      Mostrando {{ datos()!.content.length }} de {{ totalElementos() }} miembros
+    </div>
+    <div class="pagination-controls">
+      <button class="page-btn" type="button" [disabled]="pagina() === 0" (click)="irAPagina(pagina() - 1)"
+        id="pagina-anterior">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
+      </button>
+
+      @for (p of paginas(); track $index) {
+      @if (p === '...') {
+      <span class="page-ellipsis">...</span>
+      } @else {
+      <button class="page-btn" [class.page-btn--active]="p === pagina()" type="button" (click)="irAPagina(p)">{{ p + 1
+        }}</button>
+      }
+      }
+
+      <button class="page-btn" type="button" [disabled]="pagina() === totalPaginas() - 1 || totalPaginas() === 0"
+        (click)="irAPagina(pagina() + 1)" id="pagina-siguiente">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="pagination-size">
+      <select id="pagina-tamano" class="filter-input filter-select"
+        (change)="cambiarTamano(+$any($event.target).value)">
+        <option [value]="10" [selected]="tamano() === 10">10 por pag.</option>
+        <option [value]="25" [selected]="tamano() === 25">25 por pag.</option>
+        <option [value]="50" [selected]="tamano() === 50">50 por pag.</option>
+      </select>
+    </div>
+  </div>
+
+  }
+  }
+
+</div>

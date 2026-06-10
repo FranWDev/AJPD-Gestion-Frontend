@@ -1,0 +1,226 @@
+@if (svc.isOpen()) {
+  <div class="modal-backdrop" (click)="svc.cerrar()" aria-hidden="true"></div>
+
+  <div class="modal-container" role="dialog" aria-modal="true">
+    <div class="modal-box">
+
+      <div class="modal-header">
+        <h2 class="modal-title">
+          {{ svc.esEdicion() ? 'Editar miembro' : 'Nuevo miembro' }}
+        </h2>
+      </div>
+
+      <!-- Formulario -->
+      <form class="modal-form" (ngSubmit)="guardar()">
+
+        <!-- Seccion: Datos personales -->
+        <div class="form-section">
+          <h3 class="form-section-title">Datos personales</h3>
+          <div class="form-grid">
+
+            <div class="form-field form-field--full">
+              <label class="form-label" for="f-nombre">Nombre / Razon Social <span class="required">*</span></label>
+              <input
+                id="f-nombre"
+                class="form-input"
+                type="text"
+                [value]="form().nombreRazonSocial"
+                (input)="updateField('nombreRazonSocial', $any($event.target).value)"
+                placeholder="Nombre completo o razon social"
+                autocomplete="name"
+              />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="f-nif">NIF / CIF</label>
+              <input
+                id="f-nif"
+                class="form-input"
+                type="text"
+                [value]="form().nifCif ?? ''"
+                (input)="updateField('nifCif', $any($event.target).value)"
+                placeholder="12345678A"
+              />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="f-nac">Nacionalidad</label>
+              <select
+                id="f-nac"
+                class="form-input"
+                (change)="updateField('nacionalidad', $any($event.target).value)"
+              >
+                <option value="" [selected]="(form().nacionalidad ?? '') === ''">Selecciona nacionalidad...</option>
+                @for (nac of nacionalidades; track nac) {
+                  <option [value]="nac" [selected]="form().nacionalidad === nac">{{ nac }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="f-fnac">Fecha de nacimiento</label>
+              <input
+                id="f-fnac"
+                class="form-input"
+                type="date"
+                [value]="form().fechaNacimiento ?? ''"
+                (input)="updateField('fechaNacimiento', $any($event.target).value || null)"
+              />
+            </div>
+
+            <div class="form-field form-field--full">
+              <label class="form-label" for="f-dom">Domicilio</label>
+              <input
+                id="f-dom"
+                class="form-input"
+                type="text"
+                [value]="form().domicilio ?? ''"
+                (input)="updateField('domicilio', $any($event.target).value)"
+                placeholder="Calle, numero, ciudad"
+              />
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Seccion: Contacto -->
+        <div class="form-section">
+          <h3 class="form-section-title">Contacto</h3>
+          <div class="form-grid">
+
+            <div class="form-field">
+              <label class="form-label" for="f-tel">Telefono</label>
+              <input
+                id="f-tel"
+                class="form-input"
+                type="tel"
+                [value]="form().telefono ?? ''"
+                (input)="updateField('telefono', $any($event.target).value)"
+                placeholder="600 000 000"
+              />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="f-mail">Correo electronico</label>
+              <input
+                id="f-mail"
+                class="form-input"
+                type="email"
+                [value]="form().correo ?? ''"
+                (input)="updateField('correo', $any($event.target).value)"
+                placeholder="correo@ejemplo.com"
+              />
+            </div>
+
+            <div class="form-field form-field--full">
+              <label class="form-label" for="f-wa">Enlace WhatsApp</label>
+              <input
+                id="f-wa"
+                class="form-input"
+                type="url"
+                [value]="form().enlaceWhatsapp ?? ''"
+                (input)="updateField('enlaceWhatsapp', $any($event.target).value)"
+                placeholder="https://wa.me/..."
+              />
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Seccion: Asociacion -->
+        <div class="form-section">
+          <h3 class="form-section-title">Asociacion</h3>
+          <div class="form-grid">
+
+            <div class="form-field">
+              <label class="form-label" for="f-centro">Centro</label>
+              <select
+                id="f-centro"
+                class="form-input"
+                (change)="updateField('centroId', $any($event.target).value ? +$any($event.target).value : null)"
+              >
+                <option value="" [selected]="!form().centroId">Sin centro</option>
+                @for (c of centros(); track c.id) {
+                  <option [value]="c.id" [selected]="form().centroId === c.id">{{ c.nombre }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="f-falta">Fecha de alta</label>
+              <input
+                id="f-falta"
+                class="form-input"
+                type="date"
+                [value]="form().fechaAlta ?? ''"
+                (input)="updateField('fechaAlta', $any($event.target).value || null)"
+              />
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="f-cargo">Cargo actual</label>
+              <select
+                id="f-cargo"
+                class="form-input"
+                (change)="updateField('cargoId', $any($event.target).value ? +$any($event.target).value : null)"
+              >
+                <option value="" [selected]="!form().cargoId">Sin cargo</option>
+                @for (c of cargos(); track c.id) {
+                  <option [value]="c.id" [selected]="form().cargoId === c.id">{{ c.nombre }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="f-fcargo">Fecha desde el cargo</label>
+              <input
+                id="f-fcargo"
+                class="form-input"
+                type="date"
+                [value]="form().fechaCargo ?? ''"
+                (input)="updateField('fechaCargo', $any($event.target).value || null)"
+              />
+            </div>
+
+            <div class="form-field form-field--full">
+              <label class="form-label" for="f-obs">Observaciones</label>
+              <textarea
+                id="f-obs"
+                class="form-input form-textarea"
+                rows="3"
+                [value]="form().observaciones ?? ''"
+                (input)="updateField('observaciones', $any($event.target).value)"
+                placeholder="Notas adicionales..."
+              ></textarea>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Error -->
+        @if (errorGuardar()) {
+          <p class="form-error">{{ errorGuardar() }}</p>
+        }
+
+        <!-- Acciones -->
+        <div class="modal-actions">
+          <button class="btn btn-ghost" type="button" (click)="svc.cerrar()">Cancelar</button>
+          <button
+            class="btn btn-primary"
+            type="submit"
+            [disabled]="guardando()"
+            id="modal-miembro-guardar"
+          >
+            @if (guardando()) {
+              <span class="spinner"></span> Guardando...
+            } @else {
+              {{ svc.esEdicion() ? 'Guardar cambios' : 'Crear miembro' }}
+            }
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+}

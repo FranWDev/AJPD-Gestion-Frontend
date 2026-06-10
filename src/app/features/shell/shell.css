@@ -52,6 +52,7 @@
 
 .content-wrapper {
   max-width: 1280px;
+  margin: 0 auto;
   animation: contentFadeIn 0.2s ease forwards;
 }
 

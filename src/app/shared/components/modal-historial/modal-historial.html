@@ -1,0 +1,88 @@
+@if (svc.isOpen() && svc.data()) {
+  <div class="modal-backdrop" (click)="svc.cerrar()" aria-hidden="true"></div>
+
+  <div class="modal-container" role="dialog" aria-modal="true">
+    <div class="modal-box">
+
+      <div class="modal-header">
+        <h2 class="modal-title">
+          Editar historial de cargo
+        </h2>
+      </div>
+
+      <!-- Formulario -->
+      <form class="modal-form" (ngSubmit)="guardar()">
+        <div class="form-info-banner">
+          <p><strong>Miembro:</strong> {{ svc.data()?.miembroNombre }}</p>
+          @if (svc.data()?.miembroNif) {
+            <p><strong>NIF/CIF:</strong> {{ svc.data()?.miembroNif }}</p>
+          }
+        </div>
+
+        <div class="form-grid">
+          <!-- Cargo -->
+          <div class="form-field form-field--full">
+            <label class="form-label" for="h-cargo">Cargo <span class="required">*</span></label>
+            <select
+              id="h-cargo"
+              class="form-input"
+              (change)="updateField('cargoId', $any($event.target).value ? +$any($event.target).value : null)"
+            >
+              <option value="" [selected]="!form().cargoId">Selecciona un cargo...</option>
+              @for (c of cargos(); track c.id) {
+                <option [value]="c.id" [selected]="form().cargoId === c.id">{{ c.nombre }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Fecha de inicio -->
+          <div class="form-field">
+            <label class="form-label" for="h-finicio">Fecha de inicio <span class="required">*</span></label>
+            <input
+              id="h-finicio"
+              class="form-input"
+              type="date"
+              [value]="form().fechaInicio"
+              (input)="updateField('fechaInicio', $any($event.target).value)"
+            />
+          </div>
+
+          <!-- Fecha de fin -->
+          <div class="form-field">
+            <label class="form-label" for="h-ffin">Fecha de fin (opcional)</label>
+            <input
+              id="h-ffin"
+              class="form-input"
+              type="date"
+              [value]="form().fechaFin ?? ''"
+              (input)="updateField('fechaFin', $any($event.target).value || null)"
+            />
+          </div>
+        </div>
+
+        <!-- Error -->
+        @if (errorGuardar()) {
+          <p class="form-error">{{ errorGuardar() }}</p>
+        }
+
+        <!-- Acciones -->
+        <div class="modal-actions">
+          <button class="btn btn-ghost" type="button" (click)="svc.cerrar()">Cancelar</button>
+          <button
+            class="btn btn-primary"
+            type="submit"
+            [disabled]="guardando()"
+            id="modal-historial-guardar"
+          >
+            @if (guardando()) {
+              <span class="spinner"></span> Guardando...
+            } @else {
+              Guardar cambios
+            }
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+}

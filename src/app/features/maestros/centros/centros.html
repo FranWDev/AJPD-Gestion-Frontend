@@ -1,0 +1,169 @@
+<div class="maestros-page">
+
+  <!-- Cabecera -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Centros</h1>
+      <p class="page-subtitle">Administración de centros para la asignación de miembros</p>
+    </div>
+    <button class="btn btn-primary" type="button" (click)="nuevo()" id="centro-nuevo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      Nuevo centro
+    </button>
+  </div>
+
+  <!-- Contenedor de Filtros/Búsqueda -->
+  <div class="filters-card" style="margin-bottom: 20px;">
+    <div class="filters-header">
+      <div class="filter-search">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+        </svg>
+        <input
+          id="centro-buscar"
+          class="filter-input filter-input--search"
+          type="search"
+          placeholder="Buscar centro por nombre..."
+          [value]="buscar() ?? ''"
+          (input)="onBuscarChange($any($event.target).value)"
+        />
+      </div>
+
+      @if (tieneFiltrosActivos()) {
+        <button class="btn btn-ghost btn-sm btn-clear" type="button" (click)="limpiarFiltros()" id="centro-limpiar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+          Limpiar filtros
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <div class="state-loading">
+      <div class="spinner-large"></div>
+      <p>Cargando centros...</p>
+    </div>
+  } @else {
+    @if (centros().length === 0) {
+      <div class="state-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+        </svg>
+        <p>No hay centros registrados con los criterios actuales.</p>
+        @if (tieneFiltrosActivos()) {
+          <button class="btn btn-ghost" (click)="limpiarFiltros()">Limpiar filtros</button>
+        } @else {
+          <button class="btn btn-ghost" (click)="nuevo()">Registrar primer centro</button>
+        }
+      </div>
+    } @else {
+      <!-- Tabla de centros -->
+      <div class="table-wrapper">
+        <table class="maestros-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th class="th-acciones">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (c of centros(); track c.id) {
+              <tr>
+                <td class="td-id">{{ c.id }}</td>
+                <td class="td-nombre">{{ c.nombre }}</td>
+                <td class="td-acciones">
+                  <button class="action-btn" type="button" (click)="editar(c)" title="Editar centro">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
+                    </svg>
+                  </button>
+                  <button class="action-btn action-btn--danger" type="button" (click)="eliminar(c)" title="Eliminar centro">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Vista móvil (cards) -->
+      <div class="cards-list">
+        @for (c of centros(); track c.id) {
+          <div class="maestro-card">
+            <div class="card-info">
+              <span class="card-id">ID: {{ c.id }}</span>
+              <p class="card-name">{{ c.nombre }}</p>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-ghost btn-sm" (click)="editar(c)">Editar</button>
+              <button class="btn btn-ghost btn-sm" (click)="eliminar(c)">Eliminar</button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Paginación -->
+      <div class="pagination" style="margin-top: 16px;">
+        <div class="pagination-info">
+          Mostrando {{ centros().length }} de {{ totalElementos() }} centros
+        </div>
+        <div class="pagination-controls">
+          <button
+            class="page-btn"
+            type="button"
+            [disabled]="pagina() === 0"
+            (click)="irAPagina(pagina() - 1)"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+
+          @for (p of paginas(); track $index) {
+            @if (p === '...') {
+              <span class="page-ellipsis">...</span>
+            } @else {
+              <button
+                class="page-btn"
+                [class.page-btn--active]="p === pagina()"
+                type="button"
+                (click)="irAPagina(p)"
+              >{{ p + 1 }}</button>
+            }
+          }
+
+          <button
+            class="page-btn"
+            type="button"
+            [disabled]="pagina() === totalPaginas() - 1 || totalPaginas() === 0"
+            (click)="irAPagina(pagina() + 1)"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="pagination-size">
+          <select
+            class="filter-input filter-select"
+            (change)="cambiarTamano(+$any($event.target).value)"
+          >
+            <option [value]="10" [selected]="tamano() === 10">10 por pag.</option>
+            <option [value]="25" [selected]="tamano() === 25">25 por pag.</option>
+            <option [value]="50" [selected]="tamano() === 50">50 por pag.</option>
+          </select>
+        </div>
+      </div>
+    }
+  }
+
+</div>

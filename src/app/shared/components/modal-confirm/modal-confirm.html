@@ -1,0 +1,56 @@
+@if (svc.isOpen()) {
+  <div class="modal-backdrop" (click)="svc.cerrar()" aria-hidden="true"></div>
+
+  <div class="modal-container" role="dialog" aria-modal="true">
+    <div class="modal-box" [class]="'modal-box--' + (svc.config()?.tipo ?? 'warning')">
+
+      <!-- Icono -->
+      <div class="modal-icon">
+        @if (svc.config()?.tipo === 'danger') {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+          </svg>
+        } @else if (svc.config()?.tipo === 'info') {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+          </svg>
+        } @else {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+          </svg>
+        }
+      </div>
+
+      <!-- Contenido -->
+      <div class="modal-content">
+        <h2 class="modal-title">{{ svc.config()?.titulo }}</h2>
+        <p class="modal-mensaje">{{ svc.config()?.mensaje }}</p>
+      </div>
+
+      <!-- Acciones -->
+      <div class="modal-actions">
+        <button
+          class="btn btn-ghost"
+          type="button"
+          (click)="svc.cerrar()"
+          id="modal-confirm-cancelar"
+        >
+          {{ svc.config()?.labelCancelar ?? 'Cancelar' }}
+        </button>
+        <button
+          class="btn"
+          [class]="svc.config()?.tipo === 'danger' ? 'btn-danger' : 'btn-primary'"
+          type="button"
+          (click)="svc.confirmar()"
+          id="modal-confirm-aceptar"
+        >
+          {{ svc.config()?.labelConfirmar ?? 'Confirmar' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+}

@@ -5,16 +5,21 @@ const path = require('path');
 const dotenvPath = path.join(__dirname, '.env');
 const targetDir = path.join(__dirname, 'src', 'environments');
 
-// Valores por defecto
-let apiUrl = 'https://ajpd-api.onrender.com';
+// Intentar leer de process.env primero (ideal para Vercel / CI)
+let apiUrl = process.env.API_URL;
 
-// Leer .env si existe
-if (fs.existsSync(dotenvPath)) {
+// Si no, buscar en el archivo .env local
+if (!apiUrl && fs.existsSync(dotenvPath)) {
   const dotenvContent = fs.readFileSync(dotenvPath, 'utf8');
   const match = dotenvContent.match(/^API_URL\s*=\s*(.+)$/m);
   if (match && match[1]) {
     apiUrl = match[1].trim();
   }
+}
+
+// Fallback por defecto (desarrollo local)
+if (!apiUrl) {
+  apiUrl = 'http://localhost:8080';
 }
 
 // Crear la carpeta de entornos si no existe

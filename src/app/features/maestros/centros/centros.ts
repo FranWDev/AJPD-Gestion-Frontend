@@ -1,20 +1,134 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular/core';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { CentroService } from '../../../core/services/centro.service';
+import { ModalMaestroService } from '../../../shared/components/modal-maestro/modal-maestro.service';
+import { ModalConfirmService } from '../../../shared/components/modal-confirm/modal-confirm.service';
+import { CentroRef } from '../../../core/models/miembro.model';
 
 @Component({
   selector: 'app-centros',
   standalone: true,
-  template: `
-    <div class="placeholder-page">
-      <h1>Centros</h1>
-      <p>Sección en construcción.</p>
-    </div>
-  `,
-  styles: [`
-    .placeholder-page {
-      padding: 32px;
-      color: var(--color-text-secondary);
-    }
-    h1 { font-size: 1.5rem; margin-bottom: 8px; color: var(--color-text-primary); }
-  `]
+  imports: [],
+  templateUrl: './centros.html',
+  styleUrl: './centros.css',
 })
-export class CentrosComponent {}
+export class CentrosComponent implements OnInit, OnDestroy {
+  private readonly centroService = inject(CentroService);
+  private readonly modalMaestro = inject(ModalMaestroService);
+  private readonly modalConfirm = inject(ModalConfirmService);
+  private readonly destroy$ = new Subject<void>();
+  private readonly buscarSubject = new Subject<string>();
+
+  readonly centros = signal<CentroRef[]>([]);
+  readonly cargando = signal(false);
+
+  // Paginación y búsqueda
+  readonly buscar = signal<string | undefined>(undefined);
+  readonly pagina = signal(0);
+  readonly tamano = signal(10);
+  readonly totalElementos = signal(0);
+  readonly totalPaginas = signal(0);
+
+  readonly paginas = computed(() => {
+    const total = this.totalPaginas();
+    const actual = this.pagina();
+    const pages: (number | '...')[] = [];
+    for (let i = 0; i < total; i++) {
+      if (i === 0 || i === total - 1 || Math.abs(i - actual) <= 1) {
+        pages.push(i);
+      } else if (pages[pages.length - 1] !== '...') {
+        pages.push('...');
+      }
+    }
+    return pages;
+  });
+
+  ngOnInit(): void {
+    this.cargar();
+
+    // Debounce de búsqueda
+    this.buscarSubject.pipe(
+      debounceTime(1000),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(valor => {
+      this.buscar.set(valor || undefined);
+      this.pagina.set(0);
+      this.cargar();
+    });
+
+    // Recargar cuando se guarda un centro
+    this.modalMaestro.guardado$.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      if (this.modalMaestro.tipo() === 'centro') {
+        this.cargar();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  cargar(): void {
+    this.cargando.set(true);
+    this.centroService.getCentros(this.buscar(), this.pagina(), this.tamano()).subscribe({
+      next: (page) => {
+        this.centros.set(page.content);
+        this.totalElementos.set(page.totalElements);
+        this.totalPaginas.set(page.totalPages);
+        this.cargando.set(false);
+      },
+      error: () => this.cargando.set(false),
+    });
+  }
+
+  onBuscarChange(valor: string): void {
+    this.buscarSubject.next(valor);
+  }
+
+  irAPagina(p: number | '...'): void {
+    if (typeof p !== 'number') return;
+    this.pagina.set(p);
+    this.cargar();
+  }
+
+  cambiarTamano(tamano: number): void {
+    this.tamano.set(tamano);
+    this.pagina.set(0);
+    this.cargar();
+  }
+
+  tieneFiltrosActivos(): boolean {
+    return !!this.buscar();
+  }
+
+  limpiarFiltros(): void {
+    this.buscar.set(undefined);
+    this.pagina.set(0);
+    this.cargar();
+  }
+
+  nuevo(): void {
+    this.modalMaestro.open('centro');
+  }
+
+  editar(centro: CentroRef): void {
+    this.modalMaestro.open('centro', centro.id, centro.nombre);
+  }
+
+  eliminar(centro: CentroRef): void {
+    this.modalConfirm.open({
+      titulo: 'Eliminar centro',
+      mensaje: `¿Deseas eliminar permanentemente el centro "${centro.nombre}"? Esta acción solo es posible si no hay miembros asignados a este centro.`,
+      tipo: 'danger',
+      labelConfirmar: 'Eliminar',
+      onConfirmar: () => {
+        this.centroService.deleteCentro(centro.id).subscribe({
+          next: () => this.cargar(),
+          error: () => {},
+        });
+      },
+    });
+  }
+}

@@ -1,0 +1,56 @@
+@if (svc.isOpen()) {
+  <div class="modal-backdrop" (click)="svc.cerrar()" aria-hidden="true"></div>
+
+  <div class="modal-container" role="dialog" aria-modal="true">
+    <div class="modal-box">
+
+      <div class="modal-header">
+        <h2 class="modal-title">
+          {{ svc.esEdicion() ? 'Editar' : 'Nuevo' }} {{ svc.tipo() === 'centro' ? 'centro' : 'cargo' }}
+        </h2>
+      </div>
+
+      <!-- Formulario -->
+      <form class="modal-form" (ngSubmit)="guardar()">
+        <div class="form-grid">
+          <div class="form-field">
+            <label class="form-label" for="m-nombre">Nombre <span class="required">*</span></label>
+            <input
+              id="m-nombre"
+              class="form-input"
+              type="text"
+              placeholder="Nombre del {{ svc.tipo() === 'centro' ? 'centro' : 'cargo' }}..."
+              [value]="nombre()"
+              (input)="updateNombre($any($event.target).value)"
+              required
+              focus
+            />
+          </div>
+        </div>
+
+        <!-- Error -->
+        @if (errorGuardar()) {
+          <p class="form-error">{{ errorGuardar() }}</p>
+        }
+
+        <!-- Acciones -->
+        <div class="modal-actions">
+          <button class="btn btn-ghost" type="button" (click)="svc.cerrar()">Cancelar</button>
+          <button
+            class="btn btn-primary"
+            type="submit"
+            [disabled]="guardando()"
+            id="modal-maestro-guardar"
+          >
+            @if (guardando()) {
+              <span class="spinner"></span> Guardando...
+            } @else {
+              {{ svc.esEdicion() ? 'Guardar cambios' : 'Crear' }}
+            }
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+}
