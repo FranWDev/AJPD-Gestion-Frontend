@@ -1,0 +1,119 @@
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(32, 33, 36, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  backdrop-filter: blur(4px);
+  animation: fadeIn var(--transition-fast) forwards;
+}
+
+.modal-card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-3);
+  width: 90%;
+  max-width: 450px;
+  padding: 32px;
+  border: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: scaleIn var(--transition-normal) forwards;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+}
+
+.modal-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Colores temáticos por tipo de modal */
+.modal-card.success .icon-container {
+  background-color: #e6f4ea;
+  color: var(--color-success);
+}
+
+.modal-card.error .icon-container {
+  background-color: #fce8e6;
+  color: var(--color-error);
+}
+
+.modal-card.warning .icon-container {
+  background-color: #fef7e0;
+  color: var(--color-accent);
+}
+
+.modal-card.info .icon-container {
+  background-color: #e8f0fe;
+  color: var(--color-blue-medium);
+}
+
+.modal-title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.modal-body {
+  font-size: 0.95rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.btn-close {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.btn-close:hover {
+  background-color: var(--color-border);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

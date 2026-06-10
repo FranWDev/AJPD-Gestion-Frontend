@@ -33,8 +33,6 @@ export class LoginComponent {
         this.isLoading.set(false);
         if (err.status === 401) {
           this.errorMessage.set('La clave de acceso introducida es incorrecta.');
-        } else {
-          this.errorMessage.set('Error de conexión con el servidor. Inténtalo de nuevo.');
         }
       }
     });
