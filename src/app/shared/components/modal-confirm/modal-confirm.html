@@ -42,7 +42,8 @@
         </button>
         <button
           class="btn"
-          [class]="svc.config()?.tipo === 'danger' ? 'btn-danger' : 'btn-primary'"
+          [class.btn-danger]="svc.config()?.tipo === 'danger' || svc.config()?.tipo === 'warning'"
+          [class.btn-primary]="svc.config()?.tipo !== 'danger' && svc.config()?.tipo !== 'warning'"
           type="button"
           (click)="svc.confirmar()"
           id="modal-confirm-aceptar"

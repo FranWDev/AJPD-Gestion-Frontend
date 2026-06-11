@@ -140,7 +140,7 @@
 .spinner {
   width: 20px;
   height: 20px;
-  border: 2px solid rgba(255,255,255,0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   border-top-color: #ffffff;
   animation: spin 0.8s linear infinite;
@@ -163,7 +163,7 @@
   background-color: #ffffff;
   color: #3c4043;
   border: 1px solid var(--color-border);
-  box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3), 0 1px 3px 1px rgba(60,64,67,0.15);
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -177,12 +177,12 @@
 
 .btn-google:hover:not(:disabled) {
   background-color: #f8f9fa;
-  box-shadow: 0 1px 3px 0 rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+  box-shadow: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
 }
 
 .btn-google:active:not(:disabled) {
   background-color: #eeeeee;
-  box-shadow: 0 1px 2px 0 rgba(60,64,67,0.3);
+  box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.3);
 }
 
 .google-icon {
@@ -192,5 +192,7 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }

@@ -182,24 +182,7 @@
   background-color: #f0f8ff;
 }
 
-.btn {
-  padding: 8px 18px;
-  border-radius: var(--radius-full);
-  font-size: 0.875rem;
-  font-weight: 500;
-  font-family: inherit;
-  cursor: pointer;
-  border: none;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: opacity var(--transition-fast), background-color var(--transition-fast);
-}
 
-.btn-primary { background-color: var(--color-blue-medium); color: #fff; }
-.btn-primary:hover { opacity: 0.88; }
-.btn-ghost { background-color: transparent; color: var(--color-text-secondary); border: 1px solid var(--color-border); }
-.btn-ghost:hover { background-color: var(--color-surface-hover); }
 
 @keyframes backdropIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes modalIn {

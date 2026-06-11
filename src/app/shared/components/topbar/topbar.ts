@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { LayoutService } from '../../../core/services/layout.service';
 import { AuthService } from '../../../core/services/auth.service';
 import { ModalConfirmService } from '../modal-confirm/modal-confirm.service';
-import { ThemeService } from '../../../core/services/theme.service';
 
 @Component({
   selector: 'app-topbar',
@@ -14,7 +13,6 @@ import { ThemeService } from '../../../core/services/theme.service';
 })
 export class TopBarComponent {
   protected readonly layoutService = inject(LayoutService);
-  protected readonly themeService = inject(ThemeService);
   private readonly authService = inject(AuthService);
   private readonly modalConfirm = inject(ModalConfirmService);
   private readonly router = inject(Router);

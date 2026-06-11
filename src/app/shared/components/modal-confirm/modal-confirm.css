@@ -50,18 +50,18 @@
 }
 
 .modal-box--danger .modal-icon {
-  background-color: #fce8e6;
-  color: var(--color-error);
+  background-color: var(--color-error-bg);
+  color: var(--color-error-text);
 }
 
 .modal-box--warning .modal-icon {
-  background-color: #fef3e2;
-  color: #e37400;
+  background-color: var(--color-error-bg); /* Warning/baja shares error-bg for red icon tint style */
+  color: var(--color-error-text);
 }
 
 .modal-box--info .modal-icon {
-  background-color: #e8f0fe;
-  color: var(--color-blue-medium);
+  background-color: var(--color-success-bg); /* Info/revertir baja/alta uses success variables */
+  color: var(--color-success-text);
 }
 
 /* === Texto === */

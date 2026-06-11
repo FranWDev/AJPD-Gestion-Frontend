@@ -293,11 +293,11 @@
 
 /* Fila de miembro de baja */
 .row--baja {
-  background-color: #fff8f8 !important;
+  background-color: var(--color-error-bg) !important;
 }
 
 .row--baja:hover {
-  background-color: #fce8e6 !important;
+  background-color: var(--color-surface-hover) !important;
 }
 
 /* Nombre como boton clickable */
@@ -358,7 +358,7 @@
 
 .member-card--baja {
   border-left: 3px solid var(--color-secondary);
-  background-color: #fff8f8;
+  background-color: var(--color-error-bg);
 }
 
 .card-header {
