@@ -28,97 +28,109 @@
           (input)="onBuscarChange($any($event.target).value)" />
       </div>
 
-      <!-- Botón Limpiar condicional -->
-      @if (tieneFiltrosActivos()) {
-      <button class="btn btn-ghost btn-sm btn-clear" type="button" (click)="limpiarFiltros()" id="miembros-limpiar">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-          stroke-linejoin="round">
-          <path d="M6 18 18 6M6 6l12 12" />
-        </svg>
-        Limpiar filtros
-      </button>
-      }
+      <div class="filters-header-actions">
+        <!-- Botón de Toggle de Filtros Avanzados -->
+        <button class="btn btn-ghost btn-sm btn-toggle-filters" type="button" (click)="mostrarFiltrosAvanzados.set(!mostrarFiltrosAvanzados())" id="miembros-toggle-filtros">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px">
+            <path d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+          </svg>
+          {{ mostrarFiltrosAvanzados() ? 'Ocultar filtros' : 'Filtros avanzados' }}
+        </button>
+
+        <!-- Botón Limpiar condicional -->
+        @if (tieneFiltrosActivos()) {
+        <button class="btn btn-ghost btn-sm btn-clear" type="button" (click)="limpiarFiltros()" id="miembros-limpiar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M6 18 18 6M6 6l12 12" />
+          </svg>
+          Limpiar filtros
+        </button>
+        }
+      </div>
     </div>
 
     <!-- Grid de filtros selectores -->
-    <div class="filters-grid">
-      <!-- Estado -->
-      <div class="filter-field">
-        <label for="miembros-estado" class="filter-label">Estado</label>
-        <select id="miembros-estado" class="filter-input filter-select"
-          (change)="aplicarFiltro('filtroBaja', $any($event.target).value)">
-          <option value="TODOS" [selected]="(filtros().filtroBaja ?? 'TODOS') === 'TODOS'">Todos los estados</option>
-          <option value="ACTIVO" [selected]="filtros().filtroBaja === 'ACTIVO'">Activos</option>
-          <option value="BAJA" [selected]="filtros().filtroBaja === 'BAJA'">De baja</option>
-        </select>
-      </div>
-
-      <!-- Centro -->
-      <div class="filter-field">
-        <label for="miembros-centro" class="filter-label">Centro</label>
-        <select id="miembros-centro" class="filter-input filter-select"
-          (change)="aplicarFiltro('centroId', $any($event.target).value ? +$any($event.target).value : undefined)">
-          <option value="" [selected]="!filtros().centroId">Todos los centros</option>
-          @for (c of centros(); track c.id) {
-          <option [value]="c.id" [selected]="filtros().centroId === c.id">{{ c.nombre }}</option>
-          }
-        </select>
-      </div>
-
-      <!-- Cargo -->
-      <div class="filter-field">
-        <label for="miembros-cargo" class="filter-label">Cargo</label>
-        <select id="miembros-cargo" class="filter-input filter-select"
-          (change)="aplicarFiltro('cargoId', $any($event.target).value ? +$any($event.target).value : undefined)">
-          <option value="" [selected]="!filtros().cargoId">Todos los cargos</option>
-          @for (c of cargos(); track c.id) {
-          <option [value]="c.id" [selected]="filtros().cargoId === c.id">{{ c.nombre }}</option>
-          }
-        </select>
-      </div>
-
-      <!-- Nacionalidad -->
-      <div class="filter-field">
-        <label for="miembros-nacionalidad" class="filter-label">Nacionalidad</label>
-        <select id="miembros-nacionalidad" class="filter-input filter-select"
-          (change)="aplicarFiltro('nacionalidad', $any($event.target).value)">
-          <option value="" [selected]="!filtros().nacionalidad">Todas las nacionalidades</option>
-          @for (nac of nacionalidades; track nac) {
-          <option [value]="nac" [selected]="filtros().nacionalidad === nac">{{ nac }}</option>
-          }
-        </select>
-      </div>
-
-      <!-- Fechas de alta -->
-      <div class="filter-field">
-        <label class="filter-label">Fecha de alta</label>
-        <div class="filter-daterange">
-          <input id="miembros-alta-desde" class="filter-input filter-date" type="date" title="Alta desde"
-            [value]="filtros().fechaAltaDesde ?? ''"
-            (change)="aplicarFiltro('fechaAltaDesde', $any($event.target).value)" />
-          <span class="daterange-sep">—</span>
-          <input id="miembros-alta-hasta" class="filter-input filter-date" type="date" title="Alta hasta"
-            [value]="filtros().fechaAltaHasta ?? ''"
-            (change)="aplicarFiltro('fechaAltaHasta', $any($event.target).value)" />
+    @if (mostrarFiltrosAvanzados()) {
+      <div class="filters-grid">
+        <!-- Estado -->
+        <div class="filter-field filter-field--estado">
+          <label for="miembros-estado" class="filter-label">Estado</label>
+          <select id="miembros-estado" class="filter-input filter-select"
+            (change)="aplicarFiltro('filtroBaja', $any($event.target).value)">
+            <option value="TODOS" [selected]="(filtros().filtroBaja ?? 'TODOS') === 'TODOS'">Todos los estados</option>
+            <option value="ACTIVO" [selected]="filtros().filtroBaja === 'ACTIVO'">Activos</option>
+            <option value="BAJA" [selected]="filtros().filtroBaja === 'BAJA'">De baja</option>
+          </select>
         </div>
-      </div>
 
-      <!-- Fechas de baja (solo visible si procede) -->
-      @if (mostrarFiltrosFecha()) {
-      <div class="filter-field">
-        <label class="filter-label">Fecha de baja</label>
-        <div class="filter-daterange">
-          <input id="miembros-baja-desde" class="filter-input filter-date" type="date" title="Baja desde"
-            [value]="filtros().fechaBajaDesde ?? ''"
-            (change)="aplicarFiltro('fechaBajaDesde', $any($event.target).value)" />
-          <span class="daterange-sep">—</span>
-          <input id="miembros-baja-hasta" class="filter-input filter-date" type="date" title="Baja hasta"
-            [value]="filtros().fechaBajaHasta ?? ''"
-            (change)="aplicarFiltro('fechaBajaHasta', $any($event.target).value)" />
+        <!-- Centro -->
+        <div class="filter-field filter-field--centro">
+          <label for="miembros-centro" class="filter-label">Centro</label>
+          <select id="miembros-centro" class="filter-input filter-select"
+            (change)="aplicarFiltro('centroId', $any($event.target).value ? +$any($event.target).value : undefined)">
+            <option value="" [selected]="!filtros().centroId">Todos los centros</option>
+            @for (c of centros(); track c.id) {
+            <option [value]="c.id" [selected]="filtros().centroId === c.id">{{ c.nombre }}</option>
+            }
+          </select>
         </div>
+
+        <!-- Cargo -->
+        <div class="filter-field filter-field--cargo">
+          <label for="miembros-cargo" class="filter-label">Cargo</label>
+          <select id="miembros-cargo" class="filter-input filter-select"
+            (change)="aplicarFiltro('cargoId', $any($event.target).value ? +$any($event.target).value : undefined)">
+            <option value="" [selected]="!filtros().cargoId">Todos los cargos</option>
+            @for (c of cargos(); track c.id) {
+            <option [value]="c.id" [selected]="filtros().cargoId === c.id">{{ c.nombre }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Nacionalidad -->
+        <div class="filter-field filter-field--nacionalidad">
+          <label for="miembros-nacionalidad" class="filter-label">Nacionalidad</label>
+          <select id="miembros-nacionalidad" class="filter-input filter-select"
+            (change)="aplicarFiltro('nacionalidad', $any($event.target).value)">
+            <option value="" [selected]="!filtros().nacionalidad">Todas las nacionalidades</option>
+            @for (nac of nacionalidades; track nac) {
+            <option [value]="nac" [selected]="filtros().nacionalidad === nac">{{ nac }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Fechas de alta -->
+        <div class="filter-field filter-field--fecha-alta">
+          <label class="filter-label">Fecha de alta</label>
+          <div class="filter-daterange">
+            <input id="miembros-alta-desde" class="filter-input filter-date" type="date" title="Alta desde"
+              [value]="filtros().fechaAltaDesde ?? ''"
+              (change)="aplicarFiltro('fechaAltaDesde', $any($event.target).value)" />
+            <span class="daterange-sep">—</span>
+            <input id="miembros-alta-hasta" class="filter-input filter-date" type="date" title="Alta hasta"
+              [value]="filtros().fechaAltaHasta ?? ''"
+              (change)="aplicarFiltro('fechaAltaHasta', $any($event.target).value)" />
+          </div>
+        </div>
+
+        <!-- Fechas de baja (solo visible si procede) -->
+        @if (mostrarFiltrosFecha()) {
+        <div class="filter-field filter-field--fecha-baja">
+          <label class="filter-label">Fecha de baja</label>
+          <div class="filter-daterange">
+            <input id="miembros-baja-desde" class="filter-input filter-date" type="date" title="Baja desde"
+              [value]="filtros().fechaBajaDesde ?? ''"
+              (change)="aplicarFiltro('fechaBajaDesde', $any($event.target).value)" />
+            <span class="daterange-sep">—</span>
+            <input id="miembros-baja-hasta" class="filter-input filter-date" type="date" title="Baja hasta"
+              [value]="filtros().fechaBajaHasta ?? ''"
+              (change)="aplicarFiltro('fechaBajaHasta', $any($event.target).value)" />
+          </div>
+        </div>
+        }
       </div>
-      }
-    </div>
+    }
   </div>
 
   <!-- ======================================

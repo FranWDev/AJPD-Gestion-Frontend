@@ -27,21 +27,24 @@ export class ModalMiembroComponent {
   protected readonly errorGuardar = signal<string | null>(null);
 
   protected readonly nacionalidades = [
-    'España',
-    'Estados Unidos',
-    'Reino Unido',
+    'Española',
+    'Estadounidense',
+    'Británica',
     'Argentina',
-    'Colombia',
-    'México',
-    'Chile',
-    'Perú',
-    'Venezuela',
-    'Francia',
-    'Italia',
-    'Alemania',
-    'Portugal',
-    'Otro país'
+    'Colombiana',
+    'Mexicana',
+    'Chilena',
+    'Peruana',
+    'Venezolana',
+    'Francesa',
+    'Italiana',
+    'Alemana',
+    'Portuguesa',
+    'Otra'
   ];
+
+  protected readonly nacionalidad1 = signal<string>('');
+  protected readonly nacionalidad2 = signal<string>('');
 
   protected readonly form = signal<MiembroRequest>({
     nombreRazonSocial: '',
@@ -65,6 +68,9 @@ export class ModalMiembroComponent {
         this.cargarOpciones();
         const m = this.svc.miembro();
         if (m) {
+          const parts = (m.nacionalidad || '').split(' y ');
+          this.nacionalidad1.set(parts[0] || '');
+          this.nacionalidad2.set(parts[1] || '');
           this.form.set({
             nombreRazonSocial: m.nombreRazonSocial,
             centroId: m.centro?.id ?? null,
@@ -81,6 +87,8 @@ export class ModalMiembroComponent {
             observaciones: m.observaciones ?? '',
           });
         } else {
+          this.nacionalidad1.set('');
+          this.nacionalidad2.set('');
           this.form.set({
             nombreRazonSocial: '',
             centroId: null,
@@ -123,6 +131,18 @@ export class ModalMiembroComponent {
       this.errorGuardar.set('El nombre es obligatorio.');
       return;
     }
+
+    const n1 = this.nacionalidad1();
+    const n2 = this.nacionalidad2();
+    let combined = '';
+    if (n1 && n2) {
+      combined = `${n1} y ${n2}`;
+    } else if (n1) {
+      combined = n1;
+    } else if (n2) {
+      combined = n2;
+    }
+    f.nacionalidad = combined;
     this.guardando.set(true);
     this.errorGuardar.set(null);
 

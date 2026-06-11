@@ -132,10 +132,29 @@
 /* === Acciones === */
 .modal-actions {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   justify-content: flex-end;
   padding: 16px 24px 24px;
   border-top: 1px solid var(--color-border);
+}
+
+.btn-warning {
+  background-color: var(--color-accent);
+  color: #ffffff;
+}
+
+.btn-warning:hover {
+  opacity: 0.88;
+}
+
+.btn-info {
+  background-color: var(--color-blue-sky);
+  color: #ffffff;
+}
+
+.btn-info:hover {
+  opacity: 0.88;
 }
 
 .btn {

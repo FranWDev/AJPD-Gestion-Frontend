@@ -44,15 +44,29 @@
             </div>
 
             <div class="form-field">
-              <label class="form-label" for="f-nac">Nacionalidad</label>
+              <label class="form-label" for="f-nac">Nacionalidad 1</label>
               <select
                 id="f-nac"
                 class="form-input"
-                (change)="updateField('nacionalidad', $any($event.target).value)"
+                (change)="nacionalidad1.set($any($event.target).value)"
               >
-                <option value="" [selected]="(form().nacionalidad ?? '') === ''">Selecciona nacionalidad...</option>
+                <option value="" [selected]="nacionalidad1() === ''">Selecciona nacionalidad...</option>
                 @for (nac of nacionalidades; track nac) {
-                  <option [value]="nac" [selected]="form().nacionalidad === nac">{{ nac }}</option>
+                  <option [value]="nac" [selected]="nacionalidad1() === nac">{{ nac }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="form-field">
+              <label class="form-label" for="f-nac2">Nacionalidad 2 (Opcional)</label>
+              <select
+                id="f-nac2"
+                class="form-input"
+                (change)="nacionalidad2.set($any($event.target).value)"
+              >
+                <option value="" [selected]="nacionalidad2() === ''">Ninguna</option>
+                @for (nac of nacionalidades; track nac) {
+                  <option [value]="nac" [selected]="nacionalidad2() === nac">{{ nac }}</option>
                 }
               </select>
             </div>

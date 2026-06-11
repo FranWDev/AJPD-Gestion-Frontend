@@ -53,6 +53,12 @@
   flex-wrap: wrap;
 }
 
+.filters-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .filters-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -501,7 +507,14 @@
     gap: 12px;
   }
 
-  .btn-clear {
+  .filters-header-actions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .btn-clear, .btn-toggle-filters {
     width: 100%;
     justify-content: center;
   }
@@ -510,6 +523,13 @@
     grid-template-columns: 1fr;
     gap: 12px;
   }
+
+  .filter-field--centro { order: 1; }
+  .filter-field--cargo { order: 2; }
+  .filter-field--nacionalidad { order: 3; }
+  .filter-field--estado { order: 4; }
+  .filter-field--fecha-alta { order: 5; }
+  .filter-field--fecha-baja { order: 6; }
 
   .filter-input--search {
     width: 100%;

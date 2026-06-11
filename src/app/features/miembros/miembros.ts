@@ -57,22 +57,23 @@ export class MiembrosComponent implements OnInit, OnDestroy {
   readonly pagina = signal(0);
   readonly tamano = signal(10);
   readonly sort = signal<SortState>({ campo: 'nombreRazonSocial', direccion: 'asc' });
+  readonly mostrarFiltrosAvanzados = signal(false);
 
   readonly nacionalidades = [
-    'España',
-    'Estados Unidos',
-    'Reino Unido',
+    'Española',
+    'Estadounidense',
+    'Británica',
     'Argentina',
-    'Colombia',
-    'México',
-    'Chile',
-    'Perú',
-    'Venezuela',
-    'Francia',
-    'Italia',
-    'Alemania',
-    'Portugal',
-    'Otro país'
+    'Colombiana',
+    'Mexicana',
+    'Chilena',
+    'Peruana',
+    'Venezolana',
+    'Francesa',
+    'Italiana',
+    'Alemana',
+    'Portuguesa',
+    'Otra'
   ];
 
   // UI helpers
