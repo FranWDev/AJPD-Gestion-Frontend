@@ -285,8 +285,25 @@
         }
       </div>
       <div class="card-actions">
-        <button class="btn btn-ghost btn-sm" (click)="verDetalle(m)">Ver detalle</button>
-        <button class="btn btn-ghost btn-sm" (click)="editar(m)">Editar</button>
+        <div class="card-actions-left">
+          <button class="btn btn-ghost btn-sm" (click)="verDetalle(m)">Ver detalles</button>
+          <button class="btn btn-ghost btn-sm" (click)="editar(m)">Editar</button>
+        </div>
+        <div class="card-actions-right">
+          @if (!esBaja(m)) {
+            <button class="action-btn action-btn--warning" type="button" (click)="darDeBaja(m)" title="Dar de baja">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px">
+                <path d="M22 10.5h-6m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+              </svg>
+            </button>
+          } @else {
+            <button class="action-btn action-btn--info" type="button" (click)="revertirBaja(m)" title="Revertir baja">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px">
+                <path d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0ZM4 19.235v-.11a6.375 6.375 0 0 1 12.75 0v.109A12.318 12.318 0 0 1 10.374 21c-2.331 0-4.512-.645-6.374-1.766Z" />
+              </svg>
+            </button>
+          }
+        </div>
       </div>
     </div>
     }

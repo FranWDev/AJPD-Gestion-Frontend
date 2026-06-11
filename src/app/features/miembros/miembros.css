@@ -399,9 +399,20 @@
 
 .card-actions {
   display: flex;
-  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
   border-top: 1px solid var(--color-border);
   padding-top: 12px;
+}
+
+.card-actions-left {
+  display: flex;
+  gap: 8px;
+}
+
+.card-actions-right {
+  display: flex;
+  align-items: center;
 }
 
 /* ==============================

@@ -26,7 +26,10 @@ export class MiembroService {
       .set('sort', sort);
 
     if (filtros.buscar) params = params.set('buscar', filtros.buscar);
-    if (filtros.filtroBaja) params = params.set('filtroBaja', filtros.filtroBaja);
+    if (filtros.filtroBaja) {
+      const val = filtros.filtroBaja === 'ACTIVO' ? 'ACTIVOS' : filtros.filtroBaja === 'BAJA' ? 'BAJAS' : filtros.filtroBaja;
+      params = params.set('filtroBaja', val);
+    }
     if (filtros.centroId != null) params = params.set('centroId', filtros.centroId);
     if (filtros.cargoId != null) params = params.set('cargoId', filtros.cargoId);
     if (filtros.fechaAltaDesde) params = params.set('fechaAltaDesde', filtros.fechaAltaDesde);
