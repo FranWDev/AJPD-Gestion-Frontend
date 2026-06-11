@@ -10,35 +10,29 @@
       <div class="input-group">
         <label for="accessKey">Clave de Acceso</label>
         <div class="input-wrapper">
-          <input
-            id="accessKey"
-            name="accessKey"
-            type="password"
-            required
-            [(ngModel)]="accessKey"
-            [disabled]="isLoading()"
-            class="form-control"
-          />
+          <input id="accessKey" name="accessKey" type="password" required [(ngModel)]="accessKey"
+            [disabled]="isLoading()" class="form-control" />
           <span class="focus-border"></span>
         </div>
       </div>
 
       @if (errorMessage()) {
-        <div class="error-box">
-          <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="8" x2="12" y2="12"/>
-            <line x1="12" y1="16" x2="12.01" y2="16"/>
-          </svg>
-          <span>{{ errorMessage() }}</span>
-        </div>
+      <div class="error-box">
+        <svg class="error-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        <span>{{ errorMessage() }}</span>
+      </div>
       }
 
       <button type="submit" [disabled]="isLoading() || !accessKey" class="btn btn-primary">
         @if (isLoading()) {
-          <span class="spinner"></span>
+        <span class="spinner"></span>
         } @else {
-          <span>Acceder</span>
+        <span>Acceder</span>
         }
       </button>
     </form>
