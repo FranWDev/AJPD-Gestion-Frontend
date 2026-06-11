@@ -7,8 +7,11 @@ const targetDir = path.join(__dirname, 'src', 'environments');
 
 // Intentar leer de process.env primero (ideal para Vercel / CI)
 let apiUrl = process.env.API_URL;
+let googleClientId = process.env.GOOGLE_CLIENT_ID;
 
-// Si no, buscar en el archivo .env local
+const backDotenvPath = path.join(__dirname, '..', 'back', '.env');
+
+// Si no, buscar en el archivo .env local de front
 if (!apiUrl && fs.existsSync(dotenvPath)) {
   const dotenvContent = fs.readFileSync(dotenvPath, 'utf8');
   const match = dotenvContent.match(/^API_URL\s*=\s*(.+)$/m);
@@ -17,9 +20,29 @@ if (!apiUrl && fs.existsSync(dotenvPath)) {
   }
 }
 
+if (!googleClientId && fs.existsSync(dotenvPath)) {
+  const dotenvContent = fs.readFileSync(dotenvPath, 'utf8');
+  const match = dotenvContent.match(/^GOOGLE_CLIENT_ID\s*=\s*(.+)$/m);
+  if (match && match[1]) {
+    googleClientId = match[1].trim();
+  }
+}
+
+// O en el archivo .env de back
+if (!googleClientId && fs.existsSync(backDotenvPath)) {
+  const dotenvContent = fs.readFileSync(backDotenvPath, 'utf8');
+  const match = dotenvContent.match(/^GOOGLE_CLIENT_ID\s*=\s*(.+)$/m);
+  if (match && match[1]) {
+    googleClientId = match[1].trim();
+  }
+}
+
 // Fallback por defecto (desarrollo local)
 if (!apiUrl) {
   apiUrl = 'http://localhost:8080';
+}
+if (!googleClientId) {
+  googleClientId = '';
 }
 
 // Crear la carpeta de entornos si no existe
@@ -29,13 +52,15 @@ if (!fs.existsSync(targetDir)) {
 
 const envFileContent = `export const environment = {
   production: true,
-  apiUrl: '${apiUrl}'
+  apiUrl: '${apiUrl}',
+  googleClientId: '${googleClientId}'
 };
 `;
 
 const devEnvFileContent = `export const environment = {
   production: false,
-  apiUrl: '${apiUrl}'
+  apiUrl: '${apiUrl}',
+  googleClientId: '${googleClientId}'
 };
 `;
 

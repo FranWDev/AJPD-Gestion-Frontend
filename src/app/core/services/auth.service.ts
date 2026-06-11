@@ -36,11 +36,15 @@ export class AuthService {
     return this.http.post<JwtResponse>(`${environment.apiUrl}/api/auth/login`, { accessKey }).pipe(
       tap(response => {
         if (response && response.token) {
-          this.cookieService.set(this.tokenKey, response.token, 1); // Expira en 1 día
-          this.token.set(response.token);
+          this.saveToken(response.token);
         }
       })
     );
+  }
+
+  saveToken(token: string): void {
+    this.cookieService.set(this.tokenKey, token, 1); // Expira en 1 día
+    this.token.set(token);
   }
 
   logout(): void {
