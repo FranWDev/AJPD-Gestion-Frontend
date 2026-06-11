@@ -22,10 +22,7 @@
     </div>
 
     @if (cargando()) {
-      <div class="state-loading">
-        <div class="spinner-large"></div>
-        <p>Cargando historial del miembro...</p>
-      </div>
+      <app-skeleton variant="timeline" [rows]="4" />
     } @else if (miembro()) {
 
       @if (!miembro()?.historialCargos || miembro()!.historialCargos.length === 0) {
@@ -36,9 +33,44 @@
           <p>Este miembro no tiene registros en su historial de cargos.</p>
         </div>
       } @else {
+        <!-- Controles de Ordenación de Timeline (Desktop y Móvil) -->
+        <div class="timeline-sort-bar">
+          <!-- Desktop: Botones / Links -->
+          <div class="timeline-sort-desktop">
+            <span class="sort-label">Ordenar por:</span>
+            <button class="sort-btn-link" [class.active]="sortTimeline().campo === 'fechaInicio'" (click)="ordenarTimeline('fechaInicio')">
+              Fecha de Inicio
+              @if (sortTimeline().campo === 'fechaInicio') {
+                <span>{{ sortTimeline().direccion === 'asc' ? '↑' : '↓' }}</span>
+              } @else {
+                <span class="muted">↕</span>
+              }
+            </button>
+            <button class="sort-btn-link" [class.active]="sortTimeline().campo === 'fechaFin'" (click)="ordenarTimeline('fechaFin')">
+              Fecha de Fin
+              @if (sortTimeline().campo === 'fechaFin') {
+                <span>{{ sortTimeline().direccion === 'asc' ? '↑' : '↓' }}</span>
+              } @else {
+                <span class="muted">↕</span>
+              }
+            </button>
+          </div>
+
+          <!-- Móvil: Selector drop-down -->
+          <div class="timeline-sort-mobile filter-field filter-field--ordenar" style="display: none;">
+            <label for="timeline-sort-select" class="filter-label">Ordenar por</label>
+            <select id="timeline-sort-select" class="filter-input filter-select" (change)="ordenarTimelineMobile($any($event.target).value)">
+              <option value="fechaInicio,desc" [selected]="sortTimeline().campo === 'fechaInicio' && sortTimeline().direccion === 'desc'">Fecha Inicio (Reciente a antiguo)</option>
+              <option value="fechaInicio,asc" [selected]="sortTimeline().campo === 'fechaInicio' && sortTimeline().direccion === 'asc'">Fecha Inicio (Antiguo a reciente)</option>
+              <option value="fechaFin,desc" [selected]="sortTimeline().campo === 'fechaFin' && sortTimeline().direccion === 'desc'">Fecha Fin (Reciente a antiguo)</option>
+              <option value="fechaFin,asc" [selected]="sortTimeline().campo === 'fechaFin' && sortTimeline().direccion === 'asc'">Fecha Fin (Antiguo a reciente)</option>
+            </select>
+          </div>
+        </div>
+
         <!-- Timeline Vertical -->
         <div class="timeline-container">
-          @for (item of miembro()!.historialCargos; track item.id; let first = $first) {
+          @for (item of sortedHistorial(); track item.id; let first = $first) {
             <div class="timeline-item" [class.timeline-item--active]="!item.fechaFin">
               
               <!-- Línea y punto del timeline -->
@@ -195,10 +227,13 @@
 
     <!-- Carga -->
     @if (cargando()) {
-      <div class="state-loading">
-        <div class="spinner-large"></div>
-        <p>Cargando historial de cargos...</p>
-      </div>
+      <app-skeleton
+        variant="table"
+        [rows]="tamano()"
+        [cols]="5"
+        [colWidths]="[30, 25, 15, 15, 15]"
+        [headers]="['Miembro', 'Cargo', 'Fecha Inicio', 'Fecha Fin', 'Acciones']"
+      />
     } @else if (datosGlobal()) {
 
       @if (datosGlobal()!.content.length === 0) {

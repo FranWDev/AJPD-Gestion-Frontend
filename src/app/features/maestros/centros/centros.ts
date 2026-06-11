@@ -4,11 +4,12 @@ import { CentroService } from '../../../core/services/centro.service';
 import { ModalMaestroService } from '../../../shared/components/modal-maestro/modal-maestro.service';
 import { ModalConfirmService } from '../../../shared/components/modal-confirm/modal-confirm.service';
 import { CentroRef } from '../../../core/models/miembro.model';
+import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton';
 
 @Component({
   selector: 'app-centros',
   standalone: true,
-  imports: [],
+  imports: [SkeletonComponent],
   templateUrl: './centros.html',
   styleUrl: './centros.css',
 })
@@ -28,6 +29,9 @@ export class CentrosComponent implements OnInit, OnDestroy {
   readonly tamano = signal(10);
   readonly totalElementos = signal(0);
   readonly totalPaginas = signal(0);
+  readonly sort = signal({ campo: 'nombre', direccion: 'asc' });
+
+  readonly sortString = computed(() => `${this.sort().campo},${this.sort().direccion}`);
 
   readonly paginas = computed(() => {
     const total = this.totalPaginas();
@@ -72,7 +76,7 @@ export class CentrosComponent implements OnInit, OnDestroy {
 
   cargar(): void {
     this.cargando.set(true);
-    this.centroService.getCentros(this.buscar(), this.pagina(), this.tamano()).subscribe({
+    this.centroService.getCentros(this.buscar(), this.pagina(), this.tamano(), this.sortString()).subscribe({
       next: (page) => {
         this.centros.set(page.content);
         this.totalElementos.set(page.totalElements);
@@ -97,6 +101,32 @@ export class CentrosComponent implements OnInit, OnDestroy {
     this.tamano.set(tamano);
     this.pagina.set(0);
     this.cargar();
+  }
+
+  ordenarPor(campo: string): void {
+    this.sort.update(s =>
+      s.campo === campo
+        ? { campo, direccion: s.direccion === 'asc' ? 'desc' : 'asc' }
+        : { campo, direccion: 'asc' }
+    );
+    this.pagina.set(0);
+    this.cargar();
+  }
+
+  ordenarPorMobile(valor: string): void {
+    const parts = valor.split(',');
+    if (parts.length === 2) {
+      const campo = parts[0];
+      const direccion = parts[1] as 'asc' | 'desc';
+      this.sort.set({ campo, direccion });
+      this.pagina.set(0);
+      this.cargar();
+    }
+  }
+
+  iconoSort(campo: string): 'asc' | 'desc' | '' {
+    const s = this.sort();
+    return s.campo === campo ? (s.direccion as 'asc' | 'desc') : '';
   }
 
   tieneFiltrosActivos(): boolean {

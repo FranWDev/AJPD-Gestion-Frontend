@@ -31,22 +31,33 @@
         />
       </div>
 
-      @if (tieneFiltrosActivos()) {
-        <button class="btn btn-ghost btn-sm btn-clear" type="button" (click)="limpiarFiltros()" id="cargo-limpiar">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-          </svg>
-          Limpiar filtros
-        </button>
-      }
+      <div class="filters-header-actions">
+        <!-- Ordenar por (Solo visible en móvil) -->
+        <div class="filter-field filter-field--ordenar">
+          <label for="cargos-ordenar" class="filter-label">Ordenar por</label>
+          <select id="cargos-ordenar" class="filter-input filter-select"
+            (change)="ordenarPorMobile($any($event.target).value)">
+            <option value="nombre,asc" [selected]="sort().campo === 'nombre' && sort().direccion === 'asc'">Nombre (A-Z)</option>
+            <option value="nombre,desc" [selected]="sort().campo === 'nombre' && sort().direccion === 'desc'">Nombre (Z-A)</option>
+            <option value="id,asc" [selected]="sort().campo === 'id' && sort().direccion === 'asc'">ID (Ascendente)</option>
+            <option value="id,desc" [selected]="sort().campo === 'id' && sort().direccion === 'desc'">ID (Descendente)</option>
+          </select>
+        </div>
+
+        @if (tieneFiltrosActivos()) {
+          <button class="btn btn-ghost btn-sm btn-clear" type="button" (click)="limpiarFiltros()" id="cargo-limpiar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+            Limpiar filtros
+          </button>
+        }
+      </div>
     </div>
   </div>
 
   @if (cargando()) {
-    <div class="state-loading">
-      <div class="spinner-large"></div>
-      <p>Cargando cargos...</p>
-    </div>
+    <app-skeleton variant="maestro" [rows]="tamano()" />
   } @else {
     @if (cargos().length === 0) {
       <div class="state-empty">
@@ -66,8 +77,22 @@
         <table class="maestros-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Nombre</th>
+              <th class="th-sortable" (click)="ordenarPor('id')">
+                ID
+                <span class="sort-icon" [class.active]="iconoSort('id')">
+                  @if (iconoSort('id') === 'asc') { ↑ }
+                  @else if (iconoSort('id') === 'desc') { ↓ }
+                  @else { ↕ }
+                </span>
+              </th>
+              <th class="th-sortable" (click)="ordenarPor('nombre')">
+                Nombre
+                <span class="sort-icon" [class.active]="iconoSort('nombre')">
+                  @if (iconoSort('nombre') === 'asc') { ↑ }
+                  @else if (iconoSort('nombre') === 'desc') { ↓ }
+                  @else { ↕ }
+                </span>
+              </th>
               <th class="th-acciones">Acciones</th>
             </tr>
           </thead>

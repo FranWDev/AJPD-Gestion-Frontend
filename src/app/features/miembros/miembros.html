@@ -29,6 +29,20 @@
       </div>
 
       <div class="filters-header-actions">
+        <!-- Ordenar por (Solo visible en móvil) -->
+        <div class="filter-field filter-field--ordenar">
+          <label for="miembros-ordenar" class="filter-label">Ordenar por</label>
+          <select id="miembros-ordenar" class="filter-input filter-select"
+            (change)="ordenarPorMobile($any($event.target).value)">
+            <option value="nombreRazonSocial,asc" [selected]="sort().campo === 'nombreRazonSocial' && sort().direccion === 'asc'">Nombre (A-Z)</option>
+            <option value="nombreRazonSocial,desc" [selected]="sort().campo === 'nombreRazonSocial' && sort().direccion === 'desc'">Nombre (Z-A)</option>
+            <option value="id,asc" [selected]="sort().campo === 'id' && sort().direccion === 'asc'">ID (Ascendente)</option>
+            <option value="id,desc" [selected]="sort().campo === 'id' && sort().direccion === 'desc'">ID (Descendente)</option>
+            <option value="fechaAlta,asc" [selected]="sort().campo === 'fechaAlta' && sort().direccion === 'asc'">Fecha Alta (Antiguo a Nuevo)</option>
+            <option value="fechaAlta,desc" [selected]="sort().campo === 'fechaAlta' && sort().direccion === 'desc'">Fecha Alta (Nuevo a Antiguo)</option>
+          </select>
+        </div>
+
         <!-- Botón de Toggle de Filtros Avanzados -->
         <button class="btn btn-ghost btn-sm btn-toggle-filters" type="button" (click)="mostrarFiltrosAvanzados.set(!mostrarFiltrosAvanzados())" id="miembros-toggle-filtros">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px">
@@ -134,13 +148,16 @@
   </div>
 
   <!-- ======================================
-       ESTADO: CARGANDO
+       ESTADO: CARGANDO — SKELETON
   ======================================= -->
   @if (cargando()) {
-  <div class="state-loading">
-    <div class="spinner-large"></div>
-    <p>Cargando miembros...</p>
-  </div>
+    <app-skeleton
+      variant="table"
+      [rows]="tamano()"
+      [cols]="7"
+      [colWidths]="[6, 28, 16, 16, 12, 10, 12]"
+      [headers]="['ID', 'Nombre', 'Centro', 'Cargo', 'Alta', 'Estado', 'Acciones']"
+    />
   }
 
   <!-- ======================================
@@ -163,6 +180,14 @@
     <table class="miembros-table">
       <thead>
         <tr>
+          <th class="th-sortable" (click)="ordenarPor('id')">
+            ID
+            <span class="sort-icon" [class.active]="iconoSort('id')">
+              @if (iconoSort('id') === 'asc') { ↑ }
+              @else if (iconoSort('id') === 'desc') { ↓ }
+              @else { ↕ }
+            </span>
+          </th>
           <th class="th-sortable" (click)="ordenarPor('nombreRazonSocial')">
             Nombre
             <span class="sort-icon" [class.active]="iconoSort('nombreRazonSocial')">
@@ -188,6 +213,7 @@
       <tbody>
         @for (m of datos()!.content; track m.id) {
         <tr [class.row--baja]="esBaja(m)">
+          <td class="td-id">{{ m.id }}</td>
           <td class="td-nombre">
             <button class="nombre-btn" (click)="verDetalle(m)" type="button">
               {{ m.nombreRazonSocial }}
@@ -275,6 +301,7 @@
     <div class="member-card" [class.member-card--baja]="esBaja(m)">
       <div class="card-header">
         <div class="card-info">
+          <span class="card-id">ID: {{ m.id }}</span>
           <p class="card-name">{{ m.nombreRazonSocial }}</p>
           <p class="card-sub">{{ m.cargo?.nombre ?? '—' }} · {{ m.centro?.nombre ?? '—' }}</p>
         </div>

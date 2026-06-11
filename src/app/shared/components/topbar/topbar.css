@@ -74,6 +74,35 @@
   margin-left: auto;
 }
 
+/* === Boton de tema === */
+.topbar-theme-btn {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-border);
+  background: transparent;
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    background-color var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast);
+}
+
+.topbar-theme-btn:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.topbar-theme-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
 /* === Boton de logout === */
 .topbar-logout-btn {
   display: flex;

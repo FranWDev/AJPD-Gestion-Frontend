@@ -15,11 +15,11 @@ export class CargoService {
   private readonly http = inject(HttpClient);
   private readonly base = `${environment.apiUrl}/api/cargos`;
 
-  getCargos(nombre?: string, pagina: number = 0, tamano: number = 200): Observable<PageResponse<CargoRef>> {
+  getCargos(nombre?: string, pagina: number = 0, tamano: number = 200, sort: string = 'nombre,asc'): Observable<PageResponse<CargoRef>> {
     let params = new HttpParams()
       .set('page', pagina.toString())
       .set('size', tamano.toString())
-      .set('sort', 'nombre,asc');
+      .set('sort', sort);
     if (nombre) params = params.set('nombre', nombre);
     return this.http.get<PageResponse<CargoRef>>(this.base, { params });
   }

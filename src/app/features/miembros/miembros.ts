@@ -9,6 +9,7 @@ import {
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { SkeletonComponent } from '../../shared/components/skeleton/skeleton';
 
 import { MiembroService } from '../../core/services/miembro.service';
 import { CentroService } from '../../core/services/centro.service';
@@ -30,7 +31,7 @@ import {
 @Component({
   selector: 'app-miembros',
   standalone: true,
-  imports: [FormsModule],
+  imports: [FormsModule, SkeletonComponent],
   templateUrl: './miembros.html',
   styleUrl: './miembros.css',
 })
@@ -193,6 +194,17 @@ export class MiembrosComponent implements OnInit, OnDestroy {
     );
     this.pagina.set(0);
     this.cargar();
+  }
+
+  ordenarPorMobile(valor: string): void {
+    const parts = valor.split(',');
+    if (parts.length === 2) {
+      const campo = parts[0];
+      const direccion = parts[1] as 'asc' | 'desc';
+      this.sort.set({ campo, direccion });
+      this.pagina.set(0);
+      this.cargar();
+    }
   }
 
   // ---- Paginacion ----

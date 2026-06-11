@@ -60,6 +60,56 @@
   color: var(--color-text-secondary);
 }
 
+/* Timeline sorting styling */
+.timeline-sort-bar {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.timeline-sort-desktop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sort-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+}
+
+.sort-btn-link {
+  background: transparent;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.sort-btn-link:hover {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+.sort-btn-link.active {
+  color: var(--color-blue-medium);
+  font-weight: 600;
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-1);
+}
+
+.sort-btn-link .muted {
+  opacity: 0.35;
+}
+
 /* ==============================
    TIMELINE VERTICAL (MIEMBRO ESPECÍFICO)
 ============================== */
@@ -384,28 +434,6 @@
 }
 
 /* === Botones de acción === */
-.action-btn {
-  width: 34px;
-  height: 34px;
-  border: none;
-  background: transparent;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-text-secondary);
-  transition: background-color var(--transition-fast), color var(--transition-fast);
-}
-
-.action-btn svg { width: 17px; height: 17px; }
-
-.action-btn:hover {
-  background-color: var(--color-surface-hover);
-  color: var(--color-text-primary);
-}
-
-.action-btn--danger:hover { background-color: #fce8e6; color: var(--color-error); }
 
 /* ==============================
    BOTONES GENERALES
@@ -616,6 +644,20 @@
     flex-direction: column;
     align-items: stretch;
     gap: 12px;
+  }
+
+  .timeline-sort-desktop {
+    display: none !important;
+  }
+
+  .timeline-sort-mobile.filter-field--ordenar {
+    display: flex !important;
+    width: 100%;
+  }
+
+  .timeline-sort-bar {
+    width: 100%;
+    margin-bottom: 12px;
   }
 
   .btn-clear {

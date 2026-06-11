@@ -2,6 +2,7 @@ import { Component, inject, signal, computed, OnInit, OnDestroy } from '@angular
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { SkeletonComponent } from '../../shared/components/skeleton/skeleton';
 
 import { CargoService } from '../../core/services/cargo.service';
 import { MiembroService } from '../../core/services/miembro.service';
@@ -19,7 +20,7 @@ import {
 @Component({
   selector: 'app-historial',
   standalone: true,
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, SkeletonComponent],
   templateUrl: './historial.html',
   styleUrl: './historial.css',
 })
@@ -36,6 +37,25 @@ export class HistorialComponent implements OnInit, OnDestroy {
   // ID de miembro (si filtramos por uno específico)
   readonly miembroId = signal<number | null>(null);
   readonly miembro = signal<MiembroResponse | null>(null);
+  readonly sortTimeline = signal<{ campo: 'fechaInicio' | 'fechaFin', direccion: 'asc' | 'desc' }>({ campo: 'fechaInicio', direccion: 'desc' });
+
+  readonly sortedHistorial = computed(() => {
+    const m = this.miembro();
+    if (!m || !m.historialCargos) return [];
+    const h = [...m.historialCargos];
+    const { campo, direccion } = this.sortTimeline();
+    
+    h.sort((a, b) => {
+      let valA = campo === 'fechaInicio' ? a.fechaInicio : (a.fechaFin || '9999-12-31');
+      let valB = campo === 'fechaInicio' ? b.fechaInicio : (b.fechaFin || '9999-12-31');
+      
+      // If we are sorting by fechaFin desc, we probably want Active ones at the top or bottom
+      // Let's do simple alphabetical string compare (ISO dates are safe for localeCompare)
+      const res = valA.localeCompare(valB);
+      return direccion === 'asc' ? res : -res;
+    });
+    return h;
+  });
 
   // Estado global del historial
   readonly datosGlobal = signal<PageResponse<CargoHistorialDto> | null>(null);
@@ -118,15 +138,10 @@ export class HistorialComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  // ---- Cargas ----
   private cargarMiembro(id: number): void {
     this.cargando.set(true);
     this.miembroService.getMiembroById(id).subscribe({
       next: (m) => {
-        // Ordenar historial por fecha de inicio descendente
-        if (m.historialCargos) {
-          m.historialCargos.sort((a, b) => a.fechaInicio.localeCompare(b.fechaInicio));
-        }
         this.miembro.set(m);
         this.cargando.set(false);
       },
@@ -172,6 +187,29 @@ export class HistorialComponent implements OnInit, OnDestroy {
     this.filtros.set({});
     this.pagina.set(0);
     this.cargarHistorialGlobal();
+  }
+
+  // ---- Ordenación Timeline (Vista Individual) ----
+  ordenarTimeline(campo: 'fechaInicio' | 'fechaFin'): void {
+    this.sortTimeline.update(s =>
+      s.campo === campo
+        ? { campo, direccion: s.direccion === 'asc' ? 'desc' : 'asc' }
+        : { campo, direccion: 'asc' }
+    );
+  }
+
+  ordenarTimelineMobile(valor: string): void {
+    const parts = valor.split(',');
+    if (parts.length === 2) {
+      const campo = parts[0] as 'fechaInicio' | 'fechaFin';
+      const direccion = parts[1] as 'asc' | 'desc';
+      this.sortTimeline.set({ campo, direccion });
+    }
+  }
+
+  iconoSortTimeline(campo: 'fechaInicio' | 'fechaFin'): 'asc' | 'desc' | '' {
+    const s = this.sortTimeline();
+    return s.campo === campo ? s.direccion : '';
   }
 
   // ---- Paginación (Vista Global) ----

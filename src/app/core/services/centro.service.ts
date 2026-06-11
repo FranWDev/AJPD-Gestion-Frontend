@@ -9,11 +9,11 @@ export class CentroService {
   private readonly http = inject(HttpClient);
   private readonly base = `${environment.apiUrl}/api/centros`;
 
-  getCentros(nombre?: string, pagina: number = 0, tamano: number = 200): Observable<PageResponse<CentroRef>> {
+  getCentros(nombre?: string, pagina: number = 0, tamano: number = 200, sort: string = 'nombre,asc'): Observable<PageResponse<CentroRef>> {
     let params = new HttpParams()
       .set('page', pagina.toString())
       .set('size', tamano.toString())
-      .set('sort', 'nombre,asc');
+      .set('sort', sort);
     if (nombre) params = params.set('nombre', nombre);
     return this.http.get<PageResponse<CentroRef>>(this.base, { params });
   }

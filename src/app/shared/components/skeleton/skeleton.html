@@ -1,0 +1,128 @@
+<!-- =============================================
+     VARIANTE: TABLE (miembros, historial global)
+     Desktop → tabla con filas skeleton
+     Mobile  → cards skeleton
+============================================= -->
+@if (variant === 'table') {
+
+  <!-- Desktop: tabla skeleton -->
+  <div class="skeleton-table-wrapper">
+    <table class="skeleton-table">
+      <thead>
+        <tr>
+          @for (c of colsArray; track c) {
+            @if (hasHeaders) {
+              <th><span class="skeleton-real-header">{{ headerLabel(c) }}</span></th>
+            } @else {
+              <th><span class="skel skel-th" [style.width]="colWidth(c)"></span></th>
+            }
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of rowsArray; track r) {
+          <tr>
+            @for (c of colsArray; track c) {
+              <td><span class="skel skel-cell" [style.width]="colWidth(c)"></span></td>
+            }
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mobile: cards skeleton -->
+  <div class="skeleton-cards">
+    @for (r of rowsArray; track r) {
+      <div class="skeleton-card">
+        <div class="skeleton-card-header">
+          <div class="skeleton-card-info">
+            <span class="skel skel-id"></span>
+            <span class="skel skel-name"></span>
+            <span class="skel skel-sub"></span>
+          </div>
+          <span class="skel skel-badge"></span>
+        </div>
+        <div class="skeleton-card-actions">
+          <span class="skel skel-btn"></span>
+          <span class="skel skel-btn"></span>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+
+<!-- =============================================
+     VARIANTE: MAESTRO (cargos, centros)
+     Desktop → tabla 3 cols
+     Mobile  → cards simples
+============================================= -->
+@if (variant === 'maestro') {
+
+  <!-- Desktop: tabla skeleton -->
+  <div class="skeleton-table-wrapper">
+    <table class="skeleton-table">
+      <thead>
+        <tr>
+          <th style="width:80px"><span class="skel skel-th" style="width:30px"></span></th>
+          <th><span class="skel skel-th" style="width:70px"></span></th>
+          <th style="width:120px"><span class="skel skel-th" style="width:70px"></span></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of rowsArray; track r) {
+          <tr>
+            <td><span class="skel skel-cell" style="width:28px"></span></td>
+            <td><span class="skel skel-cell" [style.width]="(50 + (r * 13) % 40) + '%'"></span></td>
+            <td class="td-acciones">
+              <div style="display:flex;gap:6px;justify-content:center">
+                <span class="skel skel-icon"></span>
+                <span class="skel skel-icon"></span>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mobile: cards maestro skeleton -->
+  <div class="skeleton-cards">
+    @for (r of rowsArray; track r) {
+      <div class="skeleton-card">
+        <div class="skeleton-card-info">
+          <span class="skel skel-id"></span>
+          <span class="skel skel-name" [style.width]="(55 + (r * 11) % 35) + '%'"></span>
+        </div>
+        <div class="skeleton-card-actions-simple">
+          <span class="skel skel-btn"></span>
+          <span class="skel skel-btn"></span>
+        </div>
+      </div>
+    }
+  </div>
+}
+
+<!-- =============================================
+     VARIANTE: TIMELINE (historial de miembro)
+============================================= -->
+@if (variant === 'timeline') {
+  <div class="skeleton-timeline">
+    @for (r of rowsArray; track r) {
+      <div class="skeleton-timeline-item">
+        <div class="skeleton-timeline-dot"></div>
+        <div class="skeleton-timeline-panel">
+          <div class="skeleton-timeline-header">
+            <span class="skel skel-cargo-title" [style.width]="(40 + (r * 17) % 40) + '%'"></span>
+            <div style="display:flex;gap:4px">
+              <span class="skel skel-icon"></span>
+              <span class="skel skel-icon"></span>
+            </div>
+          </div>
+          <span class="skel skel-date"></span>
+        </div>
+      </div>
+    }
+  </div>
+}
