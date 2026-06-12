@@ -1,8 +1,7 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
 :root {
-  
+
   --color-primary: #10234e;
   --color-secondary: #ca4353;
   --color-accent: #fa9336;
@@ -13,7 +12,7 @@
   --color-blue-medium: #4462aa;
   --color-blue-sky: #54a4bc;
 
-  
+
   --color-surface: #ffffff;
   --color-surface-hover: #f1f3f4;
   --color-border: #dadce0;
@@ -22,49 +21,49 @@
   --color-success: #137333;
   --color-error: #c5221f;
 
-  
+
   --color-input-bg: #fafafa;
   --color-success-bg: #e6f4ea;
   --color-success-text: #137333;
   --color-error-bg: #fce8e6;
   --color-error-text: #c5221f;
 
-  
+
   --font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 
-  
+
   --shadow-1: 0 1px 2px 0 rgba(60, 64, 67, 0.3), 0 1px 3px 1px rgba(60, 64, 67, 0.15);
   --shadow-2: 0 1px 3px 0 rgba(60, 64, 67, 0.3), 0 4px 8px 3px rgba(60, 64, 67, 0.15);
   --shadow-3: 0 2px 6px 2px rgba(60, 64, 67, 0.15), 0 6px 10px 4px rgba(60, 64, 67, 0.3);
 
-  
+
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 16px;
   --radius-full: 9999px;
 
-  
-  --space-xs: 0.382rem;
-  
-  --space-sm: 0.618rem;
-  
-  --space-md: 1rem;
-  
-  --space-lg: 1.618rem;
-  
-  --space-xl: 2.618rem;
-  
-  --space-xxl: 4.236rem;
-  
 
-  
+  --space-xs: 0.382rem;
+
+  --space-sm: 0.618rem;
+
+  --space-md: 1rem;
+
+  --space-lg: 1.618rem;
+
+  --space-xl: 2.618rem;
+
+  --space-xxl: 4.236rem;
+
+
+
   --radius-gold-xs: 0.236rem;
   --radius-gold-sm: 0.382rem;
   --radius-gold-md: 0.618rem;
   --radius-gold-lg: 1rem;
   --radius-gold-xl: 1.618rem;
 
-  
+
   --transition-fast: 0.15s ease;
   --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -89,14 +88,14 @@
   --color-success: #4caf7d;
   --color-error: #e57373;
 
-  
+
   --color-input-bg: #282c35;
   --color-success-bg: rgba(76, 175, 125, 0.2);
   --color-success-text: #6adbb0;
   --color-error-bg: rgba(229, 115, 115, 0.2);
   --color-error-text: #ff8a8a;
 
-  
+
   --color-skeleton-bg: #22252e;
   --color-skeleton-glow: #2c313d;
 
@@ -199,7 +198,7 @@ button {
 .btn-primary {
   background-color: var(--color-blue-medium);
   color: #ffffff;
-  
+
 }
 
 .btn-primary:hover {
@@ -207,12 +206,12 @@ button {
 }
 
 [data-theme='dark'] .btn-primary {
-  
+
   background-color: #3b5b9d;
   color: #ffffff;
-  
+
   border: 1px solid #547bc2;
-  
+
 }
 
 [data-theme='dark'] .btn-primary:hover {
@@ -240,7 +239,7 @@ button {
 }
 
 [data-theme='dark'] .btn-danger {
-  
+
   background-color: #9b3838;
   color: #ffffff;
 }
@@ -377,7 +376,7 @@ button {
 }
 
 [data-theme='dark'] .page-btn--active {
-  
+
   background-color: #315c72;
   color: #ffffff;
   border-color: #43809e;
@@ -448,7 +447,7 @@ button {
 
 .filters-grid.open {
   max-height: 500px;
-  
+
   opacity: 1;
   margin-top: var(--space-lg);
 }
@@ -814,7 +813,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-lg) var(--space-lg) 0;
+  padding: var(--space-lg) var(--space-lg) var(--space-sm);
 }
 
 .modal-header-info {
@@ -983,37 +982,77 @@ button {
 }
 
 @keyframes backdropIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes backdropOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes modalIn {
-  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 @keyframes modalOut {
-  from { opacity: 1; transform: scale(1) translateY(0); }
-  to { opacity: 0; transform: scale(0.95) translateY(-10px); }
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes modalInMobile {
-  from { opacity: 0; transform: translateY(100%); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(100%);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes modalOutMobile {
-  from { opacity: 1; transform: translateY(0); }
-  to { opacity: 0; transform: translateY(100%); }
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(100%);
+  }
 }
 
 .modal-backdrop--closing {
