@@ -36,8 +36,8 @@
             (change)="ordenarPorMobile($any($event.target).value)">
             <option value="nombreRazonSocial,asc" [selected]="sort().campo === 'nombreRazonSocial' && sort().direccion === 'asc'">Nombre (A-Z)</option>
             <option value="nombreRazonSocial,desc" [selected]="sort().campo === 'nombreRazonSocial' && sort().direccion === 'desc'">Nombre (Z-A)</option>
-            <option value="id,asc" [selected]="sort().campo === 'id' && sort().direccion === 'asc'">ID (Ascendente)</option>
-            <option value="id,desc" [selected]="sort().campo === 'id' && sort().direccion === 'desc'">ID (Descendente)</option>
+            <option value="id,asc" [selected]="sort().campo === 'id' && sort().direccion === 'asc'">Nº Socio (Ascendente)</option>
+            <option value="id,desc" [selected]="sort().campo === 'id' && sort().direccion === 'desc'">Nº Socio (Descendente)</option>
             <option value="fechaAlta,asc" [selected]="sort().campo === 'fechaAlta' && sort().direccion === 'asc'">Fecha Alta (Antiguo a Nuevo)</option>
             <option value="fechaAlta,desc" [selected]="sort().campo === 'fechaAlta' && sort().direccion === 'desc'">Fecha Alta (Nuevo a Antiguo)</option>
           </select>
@@ -157,7 +157,7 @@
       [rows]="tamano()"
       [cols]="7"
       [colWidths]="[6, 28, 16, 16, 12, 10, 12]"
-      [headers]="['ID', 'Nombre', 'Centro', 'Cargo', 'Alta', 'Estado', 'Acciones']"
+      [headers]="['Nº Socio', 'Nombre', 'Centro', 'Cargo', 'Alta', 'Estado', 'Acciones']"
     />
   }
 
@@ -180,7 +180,7 @@
       <thead>
         <tr>
           <th class="th-sortable" (click)="ordenarPor('id')">
-            ID
+            Nº Socio
             <span class="sort-icon" [class.active]="iconoSort('id')">
               @if (iconoSort('id') === 'asc') { ↑ }
               @else if (iconoSort('id') === 'desc') { ↓ }
@@ -300,7 +300,7 @@
     <div class="member-card" [class.member-card--baja]="esBaja(m)">
       <div class="card-header">
         <div class="card-info">
-          <span class="card-id">ID: {{ m.id }}</span>
+          <span class="card-id">Socio Nº {{ m.id }}</span>
           <p class="card-name">{{ m.nombreRazonSocial }}</p>
           <p class="card-sub">{{ m.cargo?.nombre ?? '—' }} · {{ m.centro?.nombre ?? '—' }}</p>
         </div>

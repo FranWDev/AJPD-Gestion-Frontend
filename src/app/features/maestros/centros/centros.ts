@@ -28,7 +28,17 @@ export class CentrosComponent implements OnInit, OnDestroy {
   readonly tamano = signal(10);
   readonly totalElementos = signal(0);
   readonly totalPaginas = signal(0);
-  readonly sort = signal({ campo: 'nombre', direccion: 'asc' });
+  readonly sort = signal<{ campo: string; direccion: 'asc' | 'desc' }>(
+    (() => {
+      try {
+        const saved = localStorage.getItem('sort_centros');
+        if (saved) {
+          return JSON.parse(saved);
+        }
+      } catch (e) {}
+      return { campo: 'id', direccion: 'desc' };
+    })()
+  );
 
   readonly sortString = computed(() => `${this.sort().campo},${this.sort().direccion}`);
 
@@ -101,11 +111,15 @@ export class CentrosComponent implements OnInit, OnDestroy {
   }
 
   ordenarPor(campo: string): void {
-    this.sort.update(s =>
-      s.campo === campo
+    this.sort.update(s => {
+      const nuevo: { campo: string; direccion: 'asc' | 'desc' } = s.campo === campo
         ? { campo, direccion: s.direccion === 'asc' ? 'desc' : 'asc' }
-        : { campo, direccion: 'asc' }
-    );
+        : { campo, direccion: 'asc' };
+      try {
+        localStorage.setItem('sort_centros', JSON.stringify(nuevo));
+      } catch (e) {}
+      return nuevo;
+    });
     this.pagina.set(0);
     this.cargar();
   }
@@ -115,7 +129,11 @@ export class CentrosComponent implements OnInit, OnDestroy {
     if (parts.length === 2) {
       const campo = parts[0];
       const direccion = parts[1] as 'asc' | 'desc';
-      this.sort.set({ campo, direccion });
+      const nuevo: { campo: string; direccion: 'asc' | 'desc' } = { campo, direccion };
+      this.sort.set(nuevo);
+      try {
+        localStorage.setItem('sort_centros', JSON.stringify(nuevo));
+      } catch (e) {}
       this.pagina.set(0);
       this.cargar();
     }

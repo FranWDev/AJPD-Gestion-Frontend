@@ -55,7 +55,17 @@ export class MiembrosComponent implements OnInit, OnDestroy {
   readonly filtros = signal<MiembroFiltros>({ filtroBaja: 'TODOS' });
   readonly pagina = signal(0);
   readonly tamano = signal(10);
-  readonly sort = signal<SortState>({ campo: 'nombreRazonSocial', direccion: 'asc' });
+  readonly sort = signal<SortState>(
+    (() => {
+      try {
+        const saved = localStorage.getItem('sort_miembros');
+        if (saved) {
+          return JSON.parse(saved);
+        }
+      } catch (e) {}
+      return { campo: 'id', direccion: 'desc' };
+    })()
+  );
   readonly mostrarFiltrosAvanzados = signal(false);
 
   readonly nacionalidades = [
@@ -182,11 +192,15 @@ export class MiembrosComponent implements OnInit, OnDestroy {
   }
 
   ordenarPor(campo: string): void {
-    this.sort.update(s =>
-      s.campo === campo
+    this.sort.update(s => {
+      const nuevo: SortState = s.campo === campo
         ? { campo, direccion: s.direccion === 'asc' ? 'desc' : 'asc' }
-        : { campo, direccion: 'asc' }
-    );
+        : { campo, direccion: 'asc' };
+      try {
+        localStorage.setItem('sort_miembros', JSON.stringify(nuevo));
+      } catch (e) {}
+      return nuevo;
+    });
     this.pagina.set(0);
     this.cargar();
   }
@@ -196,7 +210,11 @@ export class MiembrosComponent implements OnInit, OnDestroy {
     if (parts.length === 2) {
       const campo = parts[0];
       const direccion = parts[1] as 'asc' | 'desc';
-      this.sort.set({ campo, direccion });
+      const nuevo: SortState = { campo, direccion };
+      this.sort.set(nuevo);
+      try {
+        localStorage.setItem('sort_miembros', JSON.stringify(nuevo));
+      } catch (e) {}
       this.pagina.set(0);
       this.cargar();
     }
