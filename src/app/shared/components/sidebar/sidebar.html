@@ -6,56 +6,57 @@
   </div>
 
   <div class="sidebar-nav">
-    @for (item of navItems; track item.label) {
+    @for (section of navSections; track section.title) {
+      <div class="nav-section-title">{{ section.title }}</div>
 
-    @if (!item.children) {
-    <a class="nav-item" [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
-      (click)="onNavClick()" [title]="item.label">
-      <span class="nav-icon">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-          stroke-linejoin="round">
-          <path [attr.d]="item.svgPath" />
-        </svg>
-      </span>
-      <span class="nav-label">{{ item.label }}</span>
-    </a>
+      @for (item of section.items; track item.label) {
+        @if (!item.children) {
+          <a class="nav-item" [routerLink]="item.route" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }"
+            (click)="onNavClick()" [title]="item.label">
+            <span class="nav-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path [attr.d]="item.svgPath" />
+              </svg>
+            </span>
+            <span class="nav-label">{{ item.label }}</span>
+          </a>
+        } @else {
+          <div class="nav-group">
+            <button class="nav-item nav-group-toggle" [class.open]="isGroupOpen(item.label)"
+              (click)="toggleGroup(item.label)" [title]="item.label" type="button">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path [attr.d]="item.svgPath" />
+                </svg>
+              </span>
+              <span class="nav-label">{{ item.label }}</span>
+              <span class="nav-chevron">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </span>
+            </button>
 
-    } @else {
-    <div class="nav-group">
-      <button class="nav-item nav-group-toggle" [class.open]="openGroup() === item.label"
-        (click)="toggleGroup(item.label)" [title]="item.label" type="button">
-        <span class="nav-icon">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-            stroke-linejoin="round">
-            <path [attr.d]="item.svgPath" />
-          </svg>
-        </span>
-        <span class="nav-label">{{ item.label }}</span>
-        <span class="nav-chevron">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-            stroke-linejoin="round">
-            <path d="M9 18l6-6-6-6" />
-          </svg>
-        </span>
-      </button>
-
-      <div class="nav-children" [class.open]="openGroup() === item.label">
-        @for (child of item.children; track child.label) {
-        <a class="nav-item nav-child" [routerLink]="child.route" routerLinkActive="active" (click)="onNavClick()"
-          [title]="child.label">
-          <span class="nav-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-              stroke-linejoin="round">
-              <path [attr.d]="child.svgPath" />
-            </svg>
-          </span>
-          <span class="nav-label">{{ child.label }}</span>
-        </a>
+            <div class="nav-children" [class.open]="isGroupOpen(item.label)">
+              @for (child of item.children; track child.label) {
+                <a class="nav-item nav-child" [routerLink]="child.route" routerLinkActive="active" (click)="onNavClick()"
+                  [title]="child.label">
+                  <span class="nav-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <path [attr.d]="child.svgPath" />
+                    </svg>
+                  </span>
+                  <span class="nav-label">{{ child.label }}</span>
+                </a>
+              }
+            </div>
+          </div>
         }
-      </div>
-    </div>
-    }
-
+      }
     }
   </div>
 

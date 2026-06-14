@@ -1,11 +1,10 @@
 .hero-page {
-  padding: var(--space-lg);
   animation: contentFadeIn 0.25s ease forwards;
 }
 
 .hero-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr));
   gap: var(--space-lg);
   margin-top: var(--space-lg);
 }
@@ -90,9 +89,7 @@
   flex-grow: 1;
 }
 
-.hidden-file-input {
-  display: none;
-}
+
 
 .hero-actions {
   display: flex;
@@ -111,35 +108,4 @@
   border-color: var(--color-error);
 }
 
-.status-message {
-  font-size: 0.85rem;
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-  margin: 0;
-}
 
-.status-message.success {
-  background-color: var(--color-success-bg);
-  color: var(--color-success-text);
-}
-
-.status-message.error {
-  background-color: var(--color-error-bg);
-  color: var(--color-error-text);
-}
-
-.status-message.loading {
-  background-color: var(--color-input-bg);
-  color: var(--color-text-secondary);
-}
-
-@keyframes contentFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}

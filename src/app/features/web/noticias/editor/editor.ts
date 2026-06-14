@@ -64,7 +64,7 @@ export class EditorComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data'] && !changes['data'].firstChange && this.isReady) {
-      this.editor.blocks.render(this.data || { blocks: [] });
+      this.editor.blocks.render(this.normalizeData(this.data) || { blocks: [] });
     }
   }
 
@@ -78,12 +78,49 @@ export class EditorComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  private normalizeData(data?: EditorJSData): EditorJSData | undefined {
+    if (!data || !data.blocks) return data;
+
+    const normalizeItems = (items: any[]): any[] => {
+      if (!Array.isArray(items)) return [];
+      return items.map(item => {
+        if (typeof item === 'string') {
+          return { content: item, items: [] };
+        } else if (item && typeof item === 'object') {
+          return {
+            content: item.content || '',
+            items: normalizeItems(item.items || [])
+          };
+        }
+        return { content: '', items: [] };
+      });
+    };
+
+    const normalizedBlocks = data.blocks.map((block: any) => {
+      if ((block.type === 'list' || block.type === 'nestedList') && block.data && block.data.items) {
+        return {
+          ...block,
+          data: {
+            ...block.data,
+            items: normalizeItems(block.data.items)
+          }
+        };
+      }
+      return block;
+    });
+
+    return {
+      ...data,
+      blocks: normalizedBlocks
+    };
+  }
+
   private initEditor(): void {
     this.editor = new EditorJS({
       holder: 'editorjs-holder',
       autofocus: false,
       placeholder: 'Escribe la publicación aquí...',
-      data: this.data || { blocks: [] },
+      data: this.normalizeData(this.data) || { blocks: [] },
       tools: {
         header: {
           class: Header as any,
@@ -102,6 +139,10 @@ export class EditorComponent implements OnInit, OnChanges, OnDestroy {
           inlineToolbar: true
         },
         delimiter: Delimiter as any,
+        list: {
+          class: NestedList as any,
+          inlineToolbar: true
+        },
         nestedList: {
           class: NestedList as any,
           inlineToolbar: true

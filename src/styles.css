@@ -396,17 +396,7 @@ button {
   margin-bottom: var(--space-sm);
 }
 
-.page-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--color-primary);
-  margin-bottom: var(--space-xs);
-}
 
-.page-subtitle {
-  font-size: 0.9rem;
-  color: var(--color-text-secondary);
-}
 
 
 .filters-card {
@@ -1164,4 +1154,35 @@ button {
   .detail-grid {
     grid-template-columns: 1fr;
   }
+}
+
+/* Centralized utilities for web features */
+.hidden-file-input {
+  display: none;
+}
+
+.status-message {
+  font-size: 0.82rem;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  margin: 0;
+}
+
+.status-message.success {
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+.status-message.error {
+  background-color: var(--color-error-bg);
+  color: var(--color-error-text);
+}
+
+.status-message.loading {
+  background-color: var(--color-input-bg);
+  color: var(--color-text-secondary);
+}
+
+.mt-xs {
+  margin-top: var(--space-xs);
 }

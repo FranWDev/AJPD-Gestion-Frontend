@@ -1,4 +1,4 @@
-import { Component, inject, HostListener, ElementRef } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../../shared/components/sidebar/sidebar';
 import { TopBarComponent } from '../../shared/components/topbar/topbar';
@@ -13,15 +13,4 @@ import { LayoutService } from '../../core/services/layout.service';
 })
 export class ShellComponent {
   protected readonly layoutService = inject(LayoutService);
-  private readonly elementRef = inject(ElementRef);
-
-  @HostListener('document:click', ['$event'])
-  protected onDocumentClick(event: MouseEvent): void {
-    if (window.innerWidth >= 768 && !this.layoutService.sidebarCollapsed()) {
-      const sidebarEl = this.elementRef.nativeElement.querySelector('.shell-sidebar');
-      if (sidebarEl && !sidebarEl.contains(event.target as Node)) {
-        this.layoutService.collapseSidebar();
-      }
-    }
-  }
 }

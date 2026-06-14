@@ -1,32 +1,87 @@
 <div class="noticias-page">
   <header class="page-header">
-    <div>
-      <h1 class="page-title">Noticias y Actividades</h1>
-      <p class="page-subtitle">Administra las noticias que se muestran en el sitio web público.</p>
+    <div class="header-content-wrapper">
+      <button type="button" class="btn toggle-list-btn" [class.btn-ghost]="listadoVisible()" [class.btn-primary]="!listadoVisible()" (click)="toggleListado()">
+        @if (listadoVisible()) {
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="btn-icon">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+          </svg>
+          Ocultar lista
+        } @else {
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="btn-icon">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+          </svg>
+          Mostrar lista
+        }
+      </button>
     </div>
   </header>
 
-  <div class="split-layout">
+  <div class="split-layout" [class.list-hidden]="!listadoVisible()">
     <!-- Panel izquierdo: Listado de noticias -->
-    <div class="list-panel">
+    <div class="list-panel" [class.collapsed]="!listadoVisible()">
       <div class="section-card">
         <div class="section-card-header">
           <h2>Publicaciones actuales</h2>
+          @if (isEditing()) {
+            <button type="button" class="btn btn-primary btn-sm btn-new-pub" (click)="limpiarFormulario()">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Nueva noticia
+            </button>
+          }
+        </div>
+
+        <div class="list-search-bar">
+          <div class="search-input-wrapper">
+            <svg class="search-icon" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+            </svg>
+            <input
+              type="text"
+              class="filter-input search-input"
+              [ngModel]="filtroBusqueda()"
+              (ngModelChange)="onBuscarChange($event)"
+              placeholder="Buscar por título o descripción...">
+            @if (filtroBusqueda()) {
+              <button class="clear-search-btn" (click)="limpiarBusqueda()" type="button" title="Limpiar búsqueda">
+                <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+              </button>
+            }
+          </div>
         </div>
 
         @if (cargando()) {
           <app-skeleton [rows]="4" [cols]="3"></app-skeleton>
         } @else if (publicaciones().length === 0) {
-          <div class="state-empty">
-            <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
-            </svg>
-            <p>No hay noticias publicadas.</p>
-          </div>
+          @if (buscar()) {
+            <div class="state-empty">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+              </svg>
+              <p>No se encontraron resultados para la búsqueda.</p>
+            </div>
+          } @else {
+            <div class="state-empty">
+              <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125V18a2.25 2.25 0 0 1-2.25 2.25M16.5 7.5V18a2.25 2.25 0 0 0 2.25 2.25M16.5 7.5V4.875c0-.621-.504-1.125-1.125-1.125H4.125C3.504 3.75 3 4.254 3 4.875V18a2.25 2.25 0 0 0 2.25 2.25h13.5M6 7.5h3v3H6v-3Z" />
+              </svg>
+              <p>No hay noticias publicadas.</p>
+            </div>
+          }
         } @else {
-          <div class="news-list-grid">
+          <div class="news-list-grid" (scroll)="onScroll($event)">
             @for (pub of publicaciones(); track pub.title) {
-              <div class="news-list-item">
+              <div class="news-list-item" [class.active]="pub.title === editandoTitle()" (click)="verPublicacion.set(pub)">
+                <button type="button" class="delete-btn-corner" (click)="eliminar(pub); $event.stopPropagation()" title="Eliminar noticia">
+                  <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                  </svg>
+                </button>
                 <div class="news-item-img">
                   <img [src]="pub.imageUrl" alt="Destacada">
                 </div>
@@ -34,20 +89,19 @@
                   <h3>{{ pub.title }}</h3>
                   <p>{{ pub.description }}</p>
                   <div class="news-item-actions">
-                    <button type="button" class="btn btn-ghost btn-sm" (click)="editar(pub)">
+                    <button type="button" class="btn btn-ghost btn-sm" (click)="editar(pub); $event.stopPropagation()">
                       <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                       </svg>
                       Editar
                     </button>
-                    <button type="button" class="btn btn-danger btn-sm" (click)="eliminar(pub)">
-                      <svg fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                      </svg>
-                      Eliminar
-                    </button>
                   </div>
                 </div>
+              </div>
+            }
+            @if (cargandoMas()) {
+              <div class="loading-more-indicator" style="padding: var(--space-sm) 0;">
+                <app-skeleton [rows]="1" [cols]="3"></app-skeleton>
               </div>
             }
           </div>
@@ -73,7 +127,6 @@
               (ngModelChange)="title.set($event)"
               name="title"
               placeholder="Ingresa el título de la noticia..."
-              [disabled]="isEditing()"
               required>
           </div>
 
@@ -126,17 +179,118 @@
               class="btn btn-primary"
               (click)="guardarPublicacion()"
               [disabled]="guardando()">
-              {{ guardando() ? 'Guardando...' : 'Guardar publicación' }}
+              {{ guardando() ? 'Guardando...' : 'Guardar' }}
             </button>
             <button
               type="button"
               class="btn btn-ghost"
               (click)="limpiarFormulario()">
-              Limpiar / Cancelar
+              Limpiar
             </button>
           </div>
         </form>
+  </div>
+</div>
+
+<!-- Modal de Visualización / Preview -->
+@if (verPublicacion()) {
+  <div class="modal-backdrop" [class.modal-backdrop--closing]="isClosingPreview()" (click)="cerrarPublicacion()" aria-hidden="true"></div>
+
+  <div class="modal-container" role="dialog" aria-modal="true" (click)="cerrarPublicacion()">
+    <div class="modal-box" [class.modal-box--closing]="isClosingPreview()" style="max-width: 750px;" (click)="$event.stopPropagation()">
+      
+      <div class="modal-header">
+        <div class="modal-header-info">
+          <h2 class="modal-title">{{ verPublicacion()?.title }}</h2>
+        </div>
+        <button class="modal-close" (click)="cerrarPublicacion()" title="Cerrar">
+          <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+      
+      <div class="modal-body" style="overflow-y: auto; max-height: 70vh;">
+        @if (verPublicacion()?.imageUrl) {
+          <div class="preview-modal-hero" style="width: 100%; max-height: 300px; border-radius: var(--radius-gold-sm); overflow: hidden; border: 1px solid var(--color-border); margin-bottom: var(--space-md);">
+            <img [src]="verPublicacion()?.imageUrl" alt="Imagen destacada" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+        }
+        
+        <p class="preview-modal-desc" style="font-size: 1rem; color: var(--color-text-secondary); line-height: 1.5; margin-bottom: var(--space-md); font-style: italic;">
+          {{ verPublicacion()?.description }}
+        </p>
+        
+        <hr class="preview-modal-divider" style="border: 0; height: 1px; background: var(--color-border); margin: var(--space-md) 0;">
+        
+        <div class="preview-modal-content" style="font-size: 0.95rem; line-height: 1.6; color: var(--color-text-primary); display: flex; flex-direction: column; gap: var(--space-sm);">
+          @for (block of verPublicacion()?.editorContent?.blocks; track $index) {
+            @if (block.type === 'paragraph') {
+              <p [innerHTML]="block.data.text" style="margin-bottom: var(--space-xs);"></p>
+            }
+            @else if (block.type === 'header') {
+              @if (block.data.level === 1) { <h1 style="font-size: 1.4rem; font-weight: 700; margin-top: var(--space-md); margin-bottom: var(--space-xs); color: var(--color-primary);" [innerHTML]="block.data.text"></h1> }
+              @else if (block.data.level === 2) { <h2 style="font-size: 1.25rem; font-weight: 600; margin-top: var(--space-md); margin-bottom: var(--space-xs); color: var(--color-primary);" [innerHTML]="block.data.text"></h2> }
+              @else if (block.data.level === 3) { <h3 style="font-size: 1.1rem; font-weight: 600; margin-top: var(--space-md); margin-bottom: var(--space-xs); color: var(--color-primary);" [innerHTML]="block.data.text"></h3> }
+              @else { <h4 style="font-size: 1rem; font-weight: 600; margin-top: var(--space-md); margin-bottom: var(--space-xs); color: var(--color-primary);" [innerHTML]="block.data.text"></h4> }
+            }
+            @else if (block.type === 'image') {
+              <div class="preview-block-image" style="text-align: center; margin: var(--space-md) 0;">
+                <img [src]="block.data.file?.url || block.data.url" [alt]="block.data.caption" style="max-width: 100%; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+                @if (block.data.caption) {
+                  <span class="image-caption" style="display: block; font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 4px;">{{ block.data.caption }}</span>
+                }
+              </div>
+            }
+            @else if (block.type === 'list' || block.type === 'nestedList') {
+              <ng-container *ngTemplateOutlet="listTemplate; context: { items: block.data.items, style: block.data.style }"></ng-container>
+            }
+            @else if (block.type === 'embed') {
+              <div class="preview-block-embed" style="text-align: center; margin: var(--space-md) 0; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; border-radius: var(--radius-sm); border: 1px solid var(--color-border);">
+                <iframe 
+                  [src]="getSafeUrl(block.data.embed)" 
+                  style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                  allowfullscreen>
+                </iframe>
+              </div>
+              @if (block.data.caption) {
+                <span class="embed-caption" style="display: block; font-size: 0.8rem; color: var(--color-text-secondary); margin-top: 4px; text-align: center; margin-bottom: var(--space-sm);">{{ block.data.caption }}</span>
+              }
+            }
+            @else if (block.type === 'delimiter') {
+              <hr class="preview-delimiter" style="text-align: center; border: none; height: 1px; background: var(--color-border); margin: var(--space-lg) auto; width: 50%;">
+            }
+          }
+        </div>
       </div>
     </div>
   </div>
-</div>
+
+  <!-- Plantilla recursiva para renderizado de listas y nestedList -->
+  <ng-template #listTemplate let-items="items" let-style="style">
+    @if (style === 'ordered') {
+      <ol style="margin-left: var(--space-md); margin-bottom: var(--space-sm); list-style-type: decimal;">
+        @for (item of items; track $index) {
+          <li style="margin-bottom: var(--space-xs);">
+            <span [innerHTML]="item.content !== undefined ? item.content : item"></span>
+            @if (item.items && item.items.length > 0) {
+              <ng-container *ngTemplateOutlet="listTemplate; context: { items: item.items, style: style }"></ng-container>
+            }
+          </li>
+        }
+      </ol>
+    } @else {
+      <ul style="margin-left: var(--space-md); margin-bottom: var(--space-sm); list-style-type: disc;">
+        @for (item of items; track $index) {
+          <li style="margin-bottom: var(--space-xs);">
+            <span [innerHTML]="item.content !== undefined ? item.content : item"></span>
+            @if (item.items && item.items.length > 0) {
+              <ng-container *ngTemplateOutlet="listTemplate; context: { items: item.items, style: style }"></ng-container>
+            }
+          </li>
+        }
+      </ul>
+    }
+  </ng-template>
+}

@@ -55,14 +55,38 @@
 }
 
 
-.topbar-title {
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   flex: 1;
+  min-width: 0;
+}
+
+.topbar-logo {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  display: none;
+}
+
+.topbar-title {
+  display: none;
   font-size: 1.125rem;
   font-weight: 600;
   color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@media (max-width: 767px) {
+  .topbar-logo {
+    display: block;
+  }
+  .topbar-title {
+    display: block;
+  }
 }
 
 

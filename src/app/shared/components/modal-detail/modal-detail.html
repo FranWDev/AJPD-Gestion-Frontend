@@ -1,8 +1,8 @@
 @if (svc.isOpen()) {
   <div class="modal-backdrop" [class.modal-backdrop--closing]="svc.isClosing()" (click)="svc.cerrar()" aria-hidden="true"></div>
 
-  <div class="modal-container" role="dialog" aria-modal="true">
-    <div class="modal-box" [class.modal-box--baja]="svc.miembro()?.fechaBaja" [class.modal-box--closing]="svc.isClosing()">
+  <div class="modal-container" role="dialog" aria-modal="true" (click)="svc.cerrar()">
+    <div class="modal-box" [class.modal-box--baja]="svc.miembro()?.fechaBaja" [class.modal-box--closing]="svc.isClosing()" (click)="$event.stopPropagation()">
 
       <div class="modal-header">
         <div class="modal-header-info">

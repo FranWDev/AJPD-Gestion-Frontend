@@ -1,10 +1,11 @@
 import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { CacheService } from './cache.service';
 import { Publication, ImageUploadResponse } from '../models/web.model';
+import { PageResponse } from '../models/miembro.model';
 
 @Injectable({
   providedIn: 'root'
@@ -17,6 +18,18 @@ export class NewsService {
 
   getAll(): Observable<Publication[]> {
     return this.cacheService.get('news:all', this.http.get<Publication[]>(this.base));
+  }
+
+  getPaginated(search?: string, page: number = 0, size: number = 10): Observable<PageResponse<Publication>> {
+    const query = search ? search.trim() : '';
+    const key = `news:list:${page}:${size}:${query}`;
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    if (query) {
+      params = params.set('search', query);
+    }
+    return this.cacheService.get(key, this.http.get<PageResponse<Publication>>(this.base, { params }));
   }
 
   getByIdentifier(identifier: string): Observable<Publication> {

@@ -1,48 +1,40 @@
 <header class="topbar">
 
-  <button
-    class="topbar-menu-btn"
-    (click)="layoutService.toggleSidebar()"
-    type="button"
-    title="Alternar panel lateral"
-    id="topbar-menu-toggle"
-  >
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-         stroke-linecap="round" stroke-linejoin="round">
-      <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-    </svg>
-  </button>
+  <div class="topbar-left">
+    <button class="topbar-menu-btn" (click)="layoutService.toggleSidebar()" type="button" title="Alternar panel lateral"
+      id="topbar-menu-toggle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+      </svg>
+    </button>
 
+    <img src="logo.png" alt="AJPD" class="topbar-logo" />
 
+    <div class="topbar-title">
+      {{ currentSectionName }}
+    </div>
+  </div>
 
   <div class="topbar-actions">
 
     @if (pwaService.installable()) {
-      <button
-        class="topbar-install-btn"
-        (click)="pwaService.install()"
-        type="button"
-        title="Instalar aplicación"
-        id="topbar-install"
-      >
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-             stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
-        </svg>
-        <span class="install-label">Instalar App</span>
-      </button>
+    <button class="topbar-install-btn" (click)="pwaService.install()" type="button" title="Instalar aplicación"
+      id="topbar-install">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path
+          d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+      </svg>
+      <span class="install-label">Instalar App</span>
+    </button>
     }
 
-    <button
-      class="topbar-logout-btn"
-      (click)="logout()"
-      type="button"
-      title="Cerrar sesion"
-      id="topbar-logout"
-    >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-           stroke-linecap="round" stroke-linejoin="round">
-        <path d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
+    <button class="topbar-logout-btn" (click)="logout()" type="button" title="Cerrar sesion" id="topbar-logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+        stroke-linejoin="round">
+        <path
+          d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" />
       </svg>
       <span class="logout-label">Cerrar sesion</span>
     </button>

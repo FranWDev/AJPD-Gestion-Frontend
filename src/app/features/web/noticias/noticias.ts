@@ -1,6 +1,8 @@
-import { Component, OnInit, inject, signal, viewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject, signal, viewChild, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { NewsService } from '../../../core/services/news.service';
 import { ImageProcessorService } from '../../../core/services/image-processor.service';
 import { ModalConfirmService } from '../../../shared/components/modal-confirm/modal-confirm.service';
@@ -16,11 +18,16 @@ import { SkeletonComponent } from '../../../shared/components/skeleton/skeleton'
   templateUrl: './noticias.html',
   styleUrl: './noticias.css'
 })
-export class NoticiasComponent implements OnInit {
+export class NoticiasComponent implements OnInit, OnDestroy {
   private readonly newsService = inject(NewsService);
   private readonly imageProcessor = inject(ImageProcessorService);
   private readonly modalConfirm = inject(ModalConfirmService);
   private readonly modalService = inject(ModalService);
+  private readonly sanitizer = inject(DomSanitizer);
+
+  getSafeUrl(url: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
 
   readonly editor = viewChild<EditorComponent>('appEditor');
 
@@ -35,24 +42,112 @@ export class NoticiasComponent implements OnInit {
   readonly imageUrl = signal<string | null>(null);
   readonly editorData = signal<EditorJSData | undefined>(undefined);
   readonly isEditing = signal(false);
+  readonly editandoTitle = signal<string | null>(null);
+  readonly editandoCreatedAt = signal<string | null>(null);
+  readonly listadoVisible = signal(typeof window !== 'undefined' ? window.innerWidth > 1024 : true);
 
-  ngOnInit(): void {
-    this.cargarPublicaciones();
+  // Pagination & Search states
+  readonly filtroBusqueda = signal('');
+  readonly buscar = signal<string | undefined>(undefined);
+  readonly pagina = signal(0);
+  readonly tamano = signal(10);
+  readonly noMasNoticias = signal(false);
+  readonly cargandoMas = signal(false);
+  readonly verPublicacion = signal<Publication | null>(null);
+  readonly isClosingPreview = signal(false);
+
+  cerrarPublicacion(): void {
+    this.isClosingPreview.set(true);
+    setTimeout(() => {
+      this.verPublicacion.set(null);
+      this.isClosingPreview.set(false);
+    }, 200);
   }
 
-  cargarPublicaciones(): void {
-    this.cargando.set(true);
-    this.newsService.getAll().subscribe({
-      next: (data) => {
-        this.publicaciones.set(data);
+  private readonly destroy$ = new Subject<void>();
+  private readonly buscarSubject = new Subject<string>();
+
+  ngOnInit(): void {
+    this.cargarPublicaciones(true);
+
+    this.buscarSubject.pipe(
+      debounceTime(1000),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(valor => {
+      this.buscar.set(valor || undefined);
+      this.cargarPublicaciones(true);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  toggleListado(): void {
+    this.listadoVisible.update(visible => !visible);
+  }
+
+  cargarPublicaciones(reset: boolean = false): void {
+    if (reset) {
+      this.pagina.set(0);
+      this.noMasNoticias.set(false);
+      this.cargando.set(true);
+    } else {
+      if (this.cargando() || this.cargandoMas() || this.noMasNoticias()) return;
+      if (this.pagina() > 0) {
+        this.cargandoMas.set(true);
+      } else {
+        this.cargando.set(true);
+      }
+    }
+
+    this.newsService.getPaginated(this.buscar(), this.pagina(), this.tamano()).subscribe({
+      next: (page) => {
+        if (reset || this.pagina() === 0) {
+          this.publicaciones.set(page.content);
+        } else {
+          this.publicaciones.update(prev => [...prev, ...page.content]);
+        }
+
+        if (page.content.length < this.tamano() || (this.pagina() + 1) >= page.totalPages) {
+          this.noMasNoticias.set(true);
+        } else {
+          this.noMasNoticias.set(false);
+        }
+
         this.cargando.set(false);
+        this.cargandoMas.set(false);
       },
       error: (err) => {
         console.error('Error al cargar publicaciones', err);
         this.modalService.showError('Error', 'No se pudieron cargar las noticias de la web.');
         this.cargando.set(false);
+        this.cargandoMas.set(false);
       }
     });
+  }
+
+  onBuscarChange(valor: string): void {
+    this.filtroBusqueda.set(valor);
+    this.buscarSubject.next(valor);
+  }
+
+  limpiarBusqueda(): void {
+    this.filtroBusqueda.set('');
+    this.buscarSubject.next('');
+  }
+
+  onScroll(event: Event): void {
+    const element = event.target as HTMLElement;
+    const threshold = 50; // pixels from bottom
+    const atBottom = element.scrollHeight - element.scrollTop - element.clientHeight < threshold;
+
+    if (atBottom && !this.cargando() && !this.cargandoMas() && !this.noMasNoticias()) {
+      this.pagina.update(p => p + 1);
+      this.cargarPublicaciones();
+    }
   }
 
   async onSubirImagen(event: Event): Promise<void> {
@@ -136,14 +231,16 @@ export class NoticiasComponent implements OnInit {
         title: this.title(),
         description: this.description(),
         imageUrl: this.imageUrl()!,
-        editorContent: content
+        editorContent: content,
+        ...(this.isEditing() && this.editandoCreatedAt() ? { createdAt: this.editandoCreatedAt()! } : {}),
+        ...(this.isEditing() && this.editandoTitle() ? { oldTitle: this.editandoTitle()! } : {})
       };
 
       this.newsService.save(publicacion).subscribe({
         next: () => {
           this.modalService.showSuccess('Guardado', 'La noticia ha sido guardada correctamente.');
           this.limpiarFormulario();
-          this.cargarPublicaciones();
+          this.cargarPublicaciones(true);
           this.guardando.set(false);
         },
         error: (err) => {
@@ -165,6 +262,13 @@ export class NoticiasComponent implements OnInit {
     this.imageUrl.set(pub.imageUrl);
     this.editorData.set(pub.editorContent);
     this.isEditing.set(true);
+    this.editandoTitle.set(pub.title);
+    this.editandoCreatedAt.set(pub.createdAt || null);
+
+    // Auto collapse list on mobile to focus on the editor
+    if (typeof window !== 'undefined' && window.innerWidth <= 1024) {
+      this.listadoVisible.set(false);
+    }
 
     // Scroll to form on top/side
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -180,7 +284,10 @@ export class NoticiasComponent implements OnInit {
         this.newsService.delete(pub.title).subscribe({
           next: () => {
             this.modalService.showSuccess('Eliminado', 'La noticia ha sido eliminada correctamente.');
-            this.cargarPublicaciones();
+            if (this.editandoTitle() === pub.title) {
+              this.limpiarFormulario();
+            }
+            this.cargarPublicaciones(true);
           },
           error: (err) => {
             console.error('Error al eliminar noticia', err);
@@ -190,13 +297,20 @@ export class NoticiasComponent implements OnInit {
       }
     });
   }
-
   limpiarFormulario(): void {
     this.title.set('');
     this.description.set('');
     this.imageUrl.set(null);
     this.editorData.set(undefined);
     this.isEditing.set(false);
+    this.editandoTitle.set(null);
+    this.editandoCreatedAt.set(null);
+
+    // Auto collapse list on mobile to focus on the editor
+    if (typeof window !== 'undefined' && window.innerWidth <= 1024) {
+      this.listadoVisible.set(false);
+    }
+
     const editorComp = this.editor();
     if (editorComp) {
       editorComp.clear();

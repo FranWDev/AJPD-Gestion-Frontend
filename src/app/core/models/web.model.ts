@@ -16,6 +16,7 @@ export interface Publication {
   imageUrl: string;
   createdAt?: string;
   editorContent: EditorJSData;
+  oldTitle?: string;
 }
 
 export interface HeroImage {
