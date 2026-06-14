@@ -1,0 +1,83 @@
+.editor-wrapper {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-gold-md);
+  padding: var(--space-md);
+  min-height: 450px;
+  overflow: auto;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.editor-wrapper:focus-within {
+  border-color: var(--color-blue-medium);
+  box-shadow: 0 0 0 3px rgba(68, 98, 170, 0.1);
+}
+
+.editorjs-holder {
+  min-height: 400px;
+  color: var(--color-text-primary);
+  font-family: var(--font-family);
+}
+
+/* Custom adjustments for EditorJS style matches in Dark Mode */
+:host ::ng-deep .ce-block {
+  color: var(--color-text-primary);
+}
+
+:host ::ng-deep .ce-toolbar__content,
+:host ::ng-deep .ce-exports,
+:host ::ng-deep .ce-toolbox,
+:host ::ng-deep .ce-settings,
+:host ::ng-deep .cdx-button,
+:host ::ng-deep .ce-conversion-toolbar,
+:host ::ng-deep .ce-inline-toolbar {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border-color: var(--color-border);
+}
+
+:host ::ng-deep .ce-popover {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+}
+
+:host ::ng-deep .ce-popover__item-icon {
+  background-color: var(--color-input-bg);
+  color: var(--color-text-primary);
+}
+
+:host ::ng-deep .ce-popover__item:hover {
+  background-color: var(--color-surface-hover);
+}
+
+:host ::ng-deep .ce-popover__item-title {
+  color: var(--color-text-primary);
+}
+
+:host ::ng-deep .cdx-input {
+  background-color: var(--color-input-bg);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-sm);
+  padding: 8px 12px;
+}
+
+:host ::ng-deep .cdx-settings-button {
+  color: var(--color-text-secondary);
+}
+
+:host ::ng-deep .cdx-settings-button:hover,
+:host ::ng-deep .cdx-settings-button--active {
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-primary);
+}
+
+:host ::ng-deep .ce-paragraph[data-placeholder]::before {
+  color: var(--color-text-secondary) !important;
+  opacity: 0.7;
+}
+
+:host ::ng-deep .ce-header {
+  color: var(--color-primary);
+}

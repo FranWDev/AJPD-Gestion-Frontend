@@ -1,0 +1,145 @@
+.hero-page {
+  padding: var(--space-lg);
+  animation: contentFadeIn 0.25s ease forwards;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+.hero-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-gold-md);
+  box-shadow: var(--shadow-1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.hero-card-header {
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface-hover);
+}
+
+.hero-card-header h2 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.hero-preview-container {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background-color: var(--color-input-bg);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hero-preview-img {
+  /* width: 100%; */
+  max-width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.hero-no-image {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.hero-spinner-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #ffffff;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.hero-card-body {
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  flex-grow: 1;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.hero-actions {
+  display: flex;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+}
+
+.hero-actions .btn {
+  flex: 1;
+  min-width: 110px;
+}
+
+.reset-btn:hover {
+  background-color: var(--color-error-bg);
+  color: var(--color-error-text);
+  border-color: var(--color-error);
+}
+
+.status-message {
+  font-size: 0.85rem;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  margin: 0;
+}
+
+.status-message.success {
+  background-color: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+.status-message.error {
+  background-color: var(--color-error-bg);
+  color: var(--color-error-text);
+}
+
+.status-message.loading {
+  background-color: var(--color-input-bg);
+  color: var(--color-text-secondary);
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

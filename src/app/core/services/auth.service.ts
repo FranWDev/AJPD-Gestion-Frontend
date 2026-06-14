@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
 import { CookieService } from './cookie.service';
+import { CacheService } from './cache.service';
 
 interface LoginRequest {
   accessKey: string;
@@ -19,6 +20,7 @@ interface JwtResponse {
 export class AuthService {
   private readonly http = inject(HttpClient);
   private readonly cookieService = inject(CookieService);
+  private readonly cacheService = inject(CacheService);
   private readonly tokenKey = 'ajpd_jwt_token';
 
   readonly token = signal<string | null>(null);
@@ -48,6 +50,9 @@ export class AuthService {
   logout(): void {
     this.cookieService.delete(this.tokenKey);
     this.token.set(null);
+
+    // Clear all centralized cached data
+    this.cacheService.clearAll();
   }
 
   isAuthenticated(): boolean {

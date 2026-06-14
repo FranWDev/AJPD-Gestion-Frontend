@@ -36,6 +36,31 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./features/maestros/cargos/cargos').then(m => m.CargosComponent),
       },
+      {
+        path: 'web',
+        children: [
+          {
+            path: '',
+            loadComponent: () =>
+              import('./features/web/dashboard/dashboard').then(m => m.WebDashboardComponent),
+          },
+          {
+            path: 'noticias',
+            loadComponent: () =>
+              import('./features/web/noticias/noticias').then(m => m.NoticiasComponent),
+          },
+          {
+            path: 'hero',
+            loadComponent: () =>
+              import('./features/web/hero/hero').then(m => m.HeroComponent),
+          },
+          {
+            path: 'slider',
+            loadComponent: () =>
+              import('./features/web/slider/slider').then(m => m.SliderComponent),
+          },
+        ],
+      },
     ],
   },
   {

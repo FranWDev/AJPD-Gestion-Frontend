@@ -1,0 +1,92 @@
+.web-dashboard-page {
+  padding: var(--space-lg);
+  animation: contentFadeIn 0.25s ease forwards;
+}
+
+.web-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
+}
+
+.web-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-gold-md);
+  padding: var(--space-lg);
+  display: flex;
+  gap: var(--space-md);
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--shadow-1);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+}
+
+.web-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-2);
+  border-color: var(--color-blue-medium);
+}
+
+.web-card-icon {
+  width: 48px;
+  height: 48px;
+  background-color: var(--color-input-bg);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--color-blue-medium);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.web-card:hover .web-card-icon {
+  background-color: var(--color-primary);
+  color: #ffffff;
+}
+
+.web-card-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.web-card-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.web-card-content h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.web-card-content p {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.web-card-link {
+  margin-top: auto;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-blue-medium);
+  display: inline-flex;
+  align-items: center;
+  padding-top: var(--space-sm);
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
