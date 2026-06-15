@@ -1,60 +1,79 @@
 <div class="hero-page">
 
   <div class="hero-grid">
-    @for (hero of heroes(); track hero.name; let idx = $index) {
-      <div class="hero-card">
-        <div class="hero-card-header">
-          <h2>Imagen Hero {{ idx + 1 }}{{ hero.name === 'hero1' ? ' (Principal)' : '' }}</h2>
+    @if (isLoading()) {
+      @for (i of [1, 2, 3]; track i) {
+        <div class="hero-card skeleton-card-loading">
+          <div class="hero-card-header skeleton-shimmer">
+            <div class="skeleton-line skeleton-header-title"></div>
+          </div>
+          <div class="hero-preview-container skeleton-shimmer">
+            <div class="skeleton-icon-placeholder"></div>
+          </div>
+          <div class="hero-card-body">
+            <div class="hero-actions">
+              <div class="skeleton-button skeleton-shimmer"></div>
+              <div class="skeleton-button skeleton-shimmer"></div>
+            </div>
+          </div>
         </div>
-      <div class="hero-preview-container">
-        @if (hero.url) {
-        <img [src]="hero.url" [alt]="hero.name" class="hero-preview-img">
-        } @else {
-        <div class="hero-no-image">Sin imagen cargada</div>
-        }
+      }
+    } @else {
+      @for (hero of heroes(); track hero.name; let idx = $index) {
+        <div class="hero-card">
+          <div class="hero-card-header">
+            <h2>Imagen Hero {{ idx + 1 }}{{ hero.name === 'hero1' ? ' (Principal)' : '' }}</h2>
+          </div>
+          <div class="hero-preview-container">
+            @if (hero.url) {
+            <img [src]="hero.url" [alt]="hero.name" class="hero-preview-img">
+            } @else {
+            <div class="hero-no-image">Sin imagen cargada</div>
+            }
 
-        @if (hero.statusType === 'loading') {
-        <div class="hero-spinner-overlay">
-          <div class="spinner"></div>
+            @if (hero.statusType === 'loading') {
+            <div class="hero-spinner-overlay">
+              <div class="spinner"></div>
+            </div>
+            }
+          </div>
+
+          <div class="hero-card-body">
+            <input type="file" #fileInput class="hidden-file-input" (change)="onFileSelected(idx, $event)" accept="image/*">
+
+            <div class="hero-actions">
+              <button type="button" class="btn btn-ghost" (click)="fileInput.click()"
+                [disabled]="hero.statusType === 'loading'">
+                Seleccionar imagen
+              </button>
+
+              @if (hero.processedFile) {
+              <button type="button" class="btn btn-primary" (click)="subirImagen(idx)"
+                [disabled]="hero.statusType === 'loading'">
+                Actualizar
+              </button>
+              }
+
+              @if (hero.url) {
+              <a [href]="hero.url" target="_blank" download class="btn btn-ghost">
+                Descargar
+              </a>
+              }
+
+              @if (hero.name !== 'hero1') {
+              <button type="button" class="btn btn-ghost reset-btn" (click)="restaurarHero(idx)"
+                [disabled]="hero.statusType === 'loading'" title="Restaurar a la imagen principal (hero1)">
+                Restaurar
+              </button>
+              }
+            </div>
+
+            @if (hero.status) {
+            <p class="status-message" [ngClass]="hero.statusType">{{ hero.status }}</p>
+            }
+          </div>
         </div>
-        }
-      </div>
-
-      <div class="hero-card-body">
-        <input type="file" #fileInput class="hidden-file-input" (change)="onFileSelected(idx, $event)" accept="image/*">
-
-        <div class="hero-actions">
-          <button type="button" class="btn btn-ghost" (click)="fileInput.click()"
-            [disabled]="hero.statusType === 'loading'">
-            Seleccionar imagen
-          </button>
-
-          @if (hero.processedFile) {
-          <button type="button" class="btn btn-primary" (click)="subirImagen(idx)"
-            [disabled]="hero.statusType === 'loading'">
-            Actualizar
-          </button>
-          }
-
-          @if (hero.url) {
-          <a [href]="hero.url" target="_blank" download class="btn btn-ghost">
-            Descargar
-          </a>
-          }
-
-          @if (hero.name !== 'hero1') {
-          <button type="button" class="btn btn-ghost reset-btn" (click)="restaurarHero(idx)"
-            [disabled]="hero.statusType === 'loading'" title="Restaurar a la imagen principal (hero1)">
-            Restaurar
-          </button>
-          }
-        </div>
-
-        @if (hero.status) {
-        <p class="status-message" [ngClass]="hero.statusType">{{ hero.status }}</p>
-        }
-      </div>
-    </div>
+      }
     }
   </div>
 </div>

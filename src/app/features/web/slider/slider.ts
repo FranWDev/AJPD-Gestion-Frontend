@@ -40,11 +40,14 @@ export class SliderComponent implements OnInit {
     { name: 'slide6', url: '', originalCaption: '', caption: '', processedFile: null, status: '', statusType: '', captionStatus: '', captionStatusType: '' }
   ]);
 
+  readonly isLoading = signal<boolean>(true);
+
   ngOnInit(): void {
     this.cargarSlides();
   }
 
   cargarSlides(): void {
+    this.isLoading.set(true);
     this.sliderService.getAll().subscribe({
       next: (resList) => {
         resList.forEach((res) => {
@@ -57,12 +60,14 @@ export class SliderComponent implements OnInit {
             });
           }
         });
+        this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Error al cargar slides info', err);
         this.slides().forEach((slide, index) => {
           this.updateSlideState(index, { status: 'No se pudo cargar la información', statusType: 'error' });
         });
+        this.isLoading.set(false);
       }
     });
   }

@@ -214,6 +214,7 @@
   max-height: calc(100vh - 280px);
   overflow-y: auto;
   padding-right: 4px;
+  padding-bottom: var(--space-xl);
 }
 
 .news-list-item {

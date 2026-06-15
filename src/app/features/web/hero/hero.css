@@ -108,4 +108,51 @@
   border-color: var(--color-error);
 }
 
+/* Skeleton loading styles */
+@keyframes skeleton-shimmer-anim {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-skeleton-bg) 25%,
+    var(--color-skeleton-glow) 50%,
+    var(--color-skeleton-bg) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer-anim 1.5s infinite linear;
+}
+
+.skeleton-card-loading {
+  pointer-events: none;
+}
+
+.skeleton-line {
+  height: 14px;
+  border-radius: 4px;
+  background-color: var(--color-skeleton-bg);
+}
+
+.skeleton-header-title {
+  width: 60%;
+  height: 18px;
+}
+
+.skeleton-icon-placeholder {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--color-skeleton-bg);
+  opacity: 0.3;
+}
+
+.skeleton-button {
+  height: 36px;
+  flex: 1;
+  border-radius: var(--radius-full);
+  background-color: var(--color-skeleton-bg);
+}
+
 

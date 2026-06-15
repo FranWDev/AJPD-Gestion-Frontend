@@ -31,11 +31,14 @@ export class HeroComponent implements OnInit {
     { name: 'hero3', url: '', processedFile: null, status: '', statusType: '' }
   ]);
 
+  readonly isLoading = signal<boolean>(true);
+
   ngOnInit(): void {
     this.cargarImagenes();
   }
 
   cargarImagenes(): void {
+    this.isLoading.set(true);
     this.heroService.getAll().subscribe({
       next: (resList) => {
         resList.forEach((res) => {
@@ -44,12 +47,14 @@ export class HeroComponent implements OnInit {
             this.updateHeroState(idx, { url: res.url });
           }
         });
+        this.isLoading.set(false);
       },
       error: (err) => {
         console.error('Error al cargar imágenes hero', err);
         this.heroes().forEach((hero, index) => {
           this.updateHeroState(index, { status: 'No se pudo cargar la imagen', statusType: 'error' });
         });
+        this.isLoading.set(false);
       }
     });
   }

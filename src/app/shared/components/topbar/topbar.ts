@@ -32,7 +32,7 @@ export class TopBarComponent {
 
   protected get currentSectionName(): string {
     const url = this.currentUrl();
-    if (url.includes('/web/noticias')) return 'Noticias';
+    if (url.includes('/web/noticias')) return 'Publicaciones';
     if (url.includes('/web/hero')) return 'Imágenes Hero';
     if (url.includes('/web/slider')) return 'Slider';
     if (url.includes('/web/dashboard')) return 'Administración Web';

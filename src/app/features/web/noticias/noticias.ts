@@ -122,7 +122,7 @@ export class NoticiasComponent implements OnInit, OnDestroy {
       },
       error: (err) => {
         console.error('Error al cargar publicaciones', err);
-        this.modalService.showError('Error', 'No se pudieron cargar las noticias de la web.');
+        this.modalService.showError('Error', 'No se pudieron cargar las publicaciones de la web.');
         this.cargando.set(false);
         this.cargandoMas.set(false);
       }
@@ -203,12 +203,12 @@ export class NoticiasComponent implements OnInit, OnDestroy {
 
   async guardarPublicacion(): Promise<void> {
     if (!this.title().trim()) {
-      this.modalService.showWarning('Atención', 'El título de la noticia es obligatorio.');
+      this.modalService.showWarning('Atención', 'El título de la publicación es obligatorio.');
       return;
     }
 
     if (!this.description().trim()) {
-      this.modalService.showWarning('Atención', 'La descripción corta de la noticia es obligatoria.');
+      this.modalService.showWarning('Atención', 'La descripción corta de la publicación es obligatoria.');
       return;
     }
 
@@ -238,14 +238,14 @@ export class NoticiasComponent implements OnInit, OnDestroy {
 
       this.newsService.save(publicacion).subscribe({
         next: () => {
-          this.modalService.showSuccess('Guardado', 'La noticia ha sido guardada correctamente.');
+          this.modalService.showSuccess('Guardado', 'La publicación ha sido guardada correctamente.');
           this.limpiarFormulario();
           this.cargarPublicaciones(true);
           this.guardando.set(false);
         },
         error: (err) => {
-          console.error('Error al guardar noticia', err);
-          this.modalService.showError('Error', 'No se pudo guardar la noticia.');
+          console.error('Error al guardar publicación', err);
+          this.modalService.showError('Error', 'No se pudo guardar la publicación.');
           this.guardando.set(false);
         }
       });
@@ -276,22 +276,22 @@ export class NoticiasComponent implements OnInit, OnDestroy {
 
   eliminar(pub: Publication): void {
     this.modalConfirm.open({
-      titulo: 'Eliminar noticia',
-      mensaje: `¿Deseas eliminar permanentemente la noticia "${pub.title}"? Esta acción no se puede deshacer.`,
+      titulo: 'Eliminar publicación',
+      mensaje: `¿Deseas eliminar permanentemente la publicación "${pub.title}"? Esta acción no se puede deshacer.`,
       tipo: 'danger',
       labelConfirmar: 'Eliminar',
       onConfirmar: () => {
         this.newsService.delete(pub.title).subscribe({
           next: () => {
-            this.modalService.showSuccess('Eliminado', 'La noticia ha sido eliminada correctamente.');
+            this.modalService.showSuccess('Eliminado', 'La publicación ha sido eliminada correctamente.');
             if (this.editandoTitle() === pub.title) {
               this.limpiarFormulario();
             }
             this.cargarPublicaciones(true);
           },
           error: (err) => {
-            console.error('Error al eliminar noticia', err);
-            this.modalService.showError('Error', 'No se pudo eliminar la noticia.');
+            console.error('Error al eliminar publicación', err);
+            this.modalService.showError('Error', 'No se pudo eliminar la publicación.');
           }
         });
       }

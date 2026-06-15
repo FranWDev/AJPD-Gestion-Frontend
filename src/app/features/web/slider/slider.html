@@ -1,102 +1,131 @@
 <div class="slider-page">
 
   <div class="slider-grid">
-    @for (slide of slides(); track slide.name; let idx = $index) {
-      <div class="slide-card">
-        <div class="slide-card-header">
-          <h2>Slide {{ idx + 1 }}</h2>
-        </div>
-
-        <div class="slide-preview-container">
-          @if (slide.url) {
-            <img [src]="slide.url" [alt]="slide.name" class="slide-preview-img">
-          } @else {
-            <div class="slide-no-image">Sin imagen cargada</div>
-          }
-
-          @if (slide.statusType === 'loading') {
-            <div class="slide-spinner-overlay">
-              <div class="spinner"></div>
+    @if (isLoading()) {
+      @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+        <div class="slide-card skeleton-card-loading">
+          <div class="slide-card-header skeleton-shimmer">
+            <div class="skeleton-line skeleton-header-title"></div>
+          </div>
+          <div class="slide-preview-container skeleton-shimmer">
+            <div class="skeleton-icon-placeholder"></div>
+          </div>
+          <div class="slide-card-body">
+            <div class="slide-image-section">
+              <div class="slide-actions">
+                <div class="skeleton-button skeleton-shimmer"></div>
+                <div class="skeleton-button skeleton-shimmer"></div>
+              </div>
             </div>
-          }
+            <div class="slide-caption-section">
+              <div class="skeleton-line skeleton-label-placeholder skeleton-shimmer"></div>
+              <div class="skeleton-line skeleton-textarea-placeholder skeleton-shimmer"></div>
+              <div class="caption-footer">
+                <div class="skeleton-line skeleton-counter-placeholder skeleton-shimmer"></div>
+                <div class="skeleton-button skeleton-shimmer" style="max-width: 120px;"></div>
+              </div>
+            </div>
+          </div>
         </div>
+      }
+    } @else {
+      @for (slide of slides(); track slide.name; let idx = $index) {
+        <div class="slide-card">
+          <div class="slide-card-header">
+            <h2>Slide {{ idx + 1 }}</h2>
+          </div>
 
-        <div class="slide-card-body">
-          <input
-            type="file"
-            #fileInput
-            class="hidden-file-input"
-            (change)="onFileSelected(idx, $event)"
-            accept="image/*">
+          <div class="slide-preview-container">
+            @if (slide.url) {
+              <img [src]="slide.url" [alt]="slide.name" class="slide-preview-img">
+            } @else {
+              <div class="slide-no-image">Sin imagen cargada</div>
+            }
 
-          <div class="slide-image-section">
-            <div class="slide-actions">
-              <button
-                type="button"
-                class="btn btn-ghost btn-sm"
-                (click)="fileInput.click()"
-                [disabled]="slide.statusType === 'loading'">
-                Seleccionar imagen
-              </button>
+            @if (slide.statusType === 'loading') {
+              <div class="slide-spinner-overlay">
+                <div class="spinner"></div>
+              </div>
+            }
+          </div>
 
-              @if (slide.processedFile) {
+          <div class="slide-card-body">
+            <input
+              type="file"
+              #fileInput
+              class="hidden-file-input"
+              (change)="onFileSelected(idx, $event)"
+              accept="image/*">
+
+            <div class="slide-image-section">
+              <div class="slide-actions">
+                <button
+                  type="button"
+                  class="btn btn-ghost btn-sm"
+                  (click)="fileInput.click()"
+                  [disabled]="slide.statusType === 'loading'">
+                  Seleccionar imagen
+                </button>
+
+                @if (slide.processedFile) {
+                  <button
+                    type="button"
+                    class="btn btn-primary btn-sm"
+                    (click)="subirImagen(idx)"
+                    [disabled]="slide.statusType === 'loading'">
+                    Actualizar Imagen
+                  </button>
+                }
+
+                @if (slide.url) {
+                  <a
+                    [href]="slide.url"
+                    target="_blank"
+                    download
+                    class="btn btn-ghost btn-sm">
+                    Descargar
+                  </a>
+                }
+              </div>
+              
+              @if (slide.status) {
+                <p class="status-message mt-xs" [ngClass]="slide.statusType">{{ slide.status }}</p>
+              }
+            </div>
+
+            <div class="slide-caption-section">
+              <label class="filter-label" [for]="'caption-' + slide.name">Pie de foto (máx. 150 caracteres)</label>
+              <textarea
+                [id]="'caption-' + slide.name"
+                class="filter-input caption-textarea"
+                [ngModel]="slide.caption"
+                (ngModelChange)="onCaptionInput(idx, $event)"
+                placeholder="Escribe la descripción del slide..."></textarea>
+              
+              <div class="caption-footer">
+                <span class="char-counter" [ngClass]="{
+                  'warning': slide.caption.length > maxChars * 0.9,
+                  'error': slide.caption.length >= maxChars
+                }">
+                  {{ slide.caption.length }} / {{ maxChars }}
+                </span>
+
                 <button
                   type="button"
                   class="btn btn-primary btn-sm"
-                  (click)="subirImagen(idx)"
-                  [disabled]="slide.statusType === 'loading'">
-                  Actualizar Imagen
+                  (click)="guardarCaption(idx)"
+                  [disabled]="slide.captionStatusType === 'loading' || slide.caption.trim() === (slide.originalCaption || '').trim()">
+                  Guardar Texto
                 </button>
-              }
+              </div>
 
-              @if (slide.url) {
-                <a
-                  [href]="slide.url"
-                  target="_blank"
-                  download
-                  class="btn btn-ghost btn-sm">
-                  Descargar
-                </a>
+              @if (slide.captionStatus) {
+                <p class="status-message mt-xs" [ngClass]="slide.captionStatusType">{{ slide.captionStatus }}</p>
               }
             </div>
-            
-            @if (slide.status) {
-              <p class="status-message mt-xs" [ngClass]="slide.statusType">{{ slide.status }}</p>
-            }
-          </div>
-
-          <div class="slide-caption-section">
-            <label class="filter-label" [for]="'caption-' + slide.name">Pie de foto (máx. 150 caracteres)</label>
-            <textarea
-              [id]="'caption-' + slide.name"
-              class="filter-input caption-textarea"
-              [ngModel]="slide.caption"
-              (ngModelChange)="onCaptionInput(idx, $event)"
-              placeholder="Escribe la descripción del slide..."></textarea>
-            
-            <div class="caption-footer">
-              <span class="char-counter" [ngClass]="{
-                'warning': slide.caption.length > maxChars * 0.9,
-                'error': slide.caption.length >= maxChars
-              }">
-                {{ slide.caption.length }} / {{ maxChars }}
-              </span>
-
-              <button
-                type="button"
-                class="btn btn-primary btn-sm"
-                (click)="guardarCaption(idx)"
-                [disabled]="slide.captionStatusType === 'loading' || slide.caption.trim() === slide.originalCaption">
-                Guardar Texto
-              </button>
-            </div>
-
-            @if (slide.captionStatus) {
-              <p class="status-message mt-xs" [ngClass]="slide.captionStatusType">{{ slide.captionStatus }}</p>
-            }
           </div>
         </div>
-      </div>
+      }
     }
   </div>
 </div>

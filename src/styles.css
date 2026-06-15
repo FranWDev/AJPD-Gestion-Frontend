@@ -253,6 +253,12 @@ button {
   font-size: 0.82rem;
 }
 
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 
 .action-btn {
   width: 34px;
