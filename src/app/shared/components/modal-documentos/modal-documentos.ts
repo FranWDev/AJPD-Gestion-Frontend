@@ -25,6 +25,7 @@ export class ModalDocumentosComponent implements OnDestroy {
   readonly dni1 = signal<DriveFileDto | null>(null);
   readonly dni2 = signal<DriveFileDto | null>(null);
   readonly foto = signal<DriveFileDto | null>(null);
+  readonly extra = signal<DriveFileDto | null>(null);
 
   readonly loading = signal<boolean>(false);
   readonly error = signal<string | null>(null);
@@ -93,17 +94,17 @@ export class ModalDocumentosComponent implements OnDestroy {
     this.dni1.set(null);
     this.dni2.set(null);
     this.foto.set(null);
+    this.extra.set(null);
 
-    forkJoin({
-      dni: this.miembroService.getDocumentos(miembroId, 'DNI'),
-      foto: this.miembroService.getDocumentos(miembroId, 'FOTO')
-    }).subscribe({
-      next: ({ dni, foto }) => {
+    this.miembroService.getAllDocumentos(miembroId).subscribe({
+      next: ({ dni, foto, extra }) => {
         let dniList = dni;
         let fotoList = foto;
+        let extraList = extra;
 
         const mockDniKey = `${miembroId}_DNI`;
         const mockFotoKey = `${miembroId}_FOTO`;
+        const mockExtraKey = `${miembroId}_EXTRA`;
 
         // If backend lists are empty and we have local mock files, use local mock files.
         if (MOCK_FILES_DB.has(mockDniKey) && dniList.length === 0) {
@@ -111,6 +112,9 @@ export class ModalDocumentosComponent implements OnDestroy {
         }
         if (MOCK_FILES_DB.has(mockFotoKey) && fotoList.length === 0) {
           fotoList = MOCK_FILES_DB.get(mockFotoKey) || [];
+        }
+        if (MOCK_FILES_DB.has(mockExtraKey) && extraList.length === 0) {
+          extraList = MOCK_FILES_DB.get(mockExtraKey) || [];
         }
 
         // Distribute files to slots
@@ -133,6 +137,11 @@ export class ModalDocumentosComponent implements OnDestroy {
           }
         }
 
+        if (extraList && extraList.length > 0) {
+          this.extra.set(extraList[0]);
+          this.clearLocalPreview('extra');
+        }
+
         this.loading.set(false);
         this.cargarPreviews(miembroId);
       },
@@ -143,7 +152,7 @@ export class ModalDocumentosComponent implements OnDestroy {
     });
   }
 
-  uploadFile(file: File, slot: 'dni1' | 'dni2' | 'foto'): void {
+  uploadFile(file: File, slot: 'dni1' | 'dni2' | 'foto' | 'extra'): void {
     const miembroId = this.svc.miembroId();
     if (miembroId === null) return;
 
@@ -152,6 +161,10 @@ export class ModalDocumentosComponent implements OnDestroy {
     // Validations
     if (slot === 'foto' && !file.type.startsWith('image/') && file.type !== 'application/pdf' && !file.name.endsWith('.pdf')) {
       this.error.set('El archivo para la foto de perfil debe ser una imagen o PDF.');
+      return;
+    }
+    if (slot === 'extra' && !file.type.startsWith('image/') && file.type !== 'application/pdf' && !file.name.endsWith('.pdf')) {
+      this.error.set('El archivo adicional debe ser una imagen o PDF.');
       return;
     }
 
@@ -166,21 +179,22 @@ export class ModalDocumentosComponent implements OnDestroy {
     }
 
     const ext = file.name.includes('.') ? file.name.substring(file.name.lastIndexOf('.')) : '';
-    let targetBase = '';
-    let tipo: 'DNI' | 'FOTO' = 'DNI';
+    let targetName = '';
+    let tipo: 'DNI' | 'FOTO' | 'EXTRA' = 'DNI';
 
     if (slot === 'dni1') {
-      targetBase = 'DNI-1';
+      targetName = `DNI-1${ext}`;
       tipo = 'DNI';
     } else if (slot === 'dni2') {
-      targetBase = 'DNI-2';
+      targetName = `DNI-2${ext}`;
       tipo = 'DNI';
     } else if (slot === 'foto') {
-      targetBase = 'FOTO';
+      targetName = `FOTO${ext}`;
       tipo = 'FOTO';
+    } else if (slot === 'extra') {
+      targetName = file.name;
+      tipo = 'EXTRA';
     }
-
-    const targetName = `${targetBase}${ext}`;
 
     this.uploading.update(u => ({ ...u, [slot]: true }));
     this.progress.update(p => ({ ...p, [slot]: 0 }));
@@ -239,7 +253,7 @@ export class ModalDocumentosComponent implements OnDestroy {
     });
   }
 
-  simulateUpload(miembroId: number, tipo: 'DNI' | 'FOTO', targetName: string, file: File, slot: 'dni1' | 'dni2' | 'foto'): void {
+  simulateUpload(miembroId: number, tipo: 'DNI' | 'FOTO' | 'EXTRA', targetName: string, file: File, slot: 'dni1' | 'dni2' | 'foto' | 'extra'): void {
     let currentProgress = 0;
     const interval = setInterval(() => {
       currentProgress += 10;
@@ -271,12 +285,12 @@ export class ModalDocumentosComponent implements OnDestroy {
     }, 100);
   }
 
-  eliminarDocumento(slot: 'dni1' | 'dni2' | 'foto'): void {
+  eliminarDocumento(slot: 'dni1' | 'dni2' | 'foto' | 'extra'): void {
     const miembroId = this.svc.miembroId();
     if (miembroId === null) return;
 
     let file: DriveFileDto | null = null;
-    let tipo: 'DNI' | 'FOTO' = 'DNI';
+    let tipo: 'DNI' | 'FOTO' | 'EXTRA' = 'DNI';
 
     if (slot === 'dni1') {
       file = this.dni1();
@@ -287,6 +301,9 @@ export class ModalDocumentosComponent implements OnDestroy {
     } else if (slot === 'foto') {
       file = this.foto();
       tipo = 'FOTO';
+    } else if (slot === 'extra') {
+      file = this.extra();
+      tipo = 'EXTRA';
     }
 
     if (!file) return;
@@ -316,7 +333,7 @@ export class ModalDocumentosComponent implements OnDestroy {
     });
   }
 
-  private clearLocalPreview(slot: 'dni1' | 'dni2' | 'foto'): void {
+  private clearLocalPreview(slot: 'dni1' | 'dni2' | 'foto' | 'extra'): void {
     const prevUrl = this.localPreviews()[slot];
     if (prevUrl && prevUrl.startsWith('blob:')) {
       URL.revokeObjectURL(prevUrl);
@@ -328,7 +345,7 @@ export class ModalDocumentosComponent implements OnDestroy {
     });
   }
 
-  private removeMockFile(miembroId: number, tipo: 'DNI' | 'FOTO', fileId: string): void {
+  private removeMockFile(miembroId: number, tipo: 'DNI' | 'FOTO' | 'EXTRA', fileId: string): void {
     const key = `${miembroId}_${tipo}`;
     if (MOCK_FILES_DB.has(key)) {
       const mockList = MOCK_FILES_DB.get(key) || [];
@@ -338,17 +355,17 @@ export class ModalDocumentosComponent implements OnDestroy {
   }
 
   // Event handlers for drag & drop
-  onDragOver(event: DragEvent, slot: 'dni1' | 'dni2' | 'foto'): void {
+  onDragOver(event: DragEvent, slot: 'dni1' | 'dni2' | 'foto' | 'extra'): void {
     event.preventDefault();
     this.dragOver.update(d => ({ ...d, [slot]: true }));
   }
 
-  onDragLeave(event: DragEvent, slot: 'dni1' | 'dni2' | 'foto'): void {
+  onDragLeave(event: DragEvent, slot: 'dni1' | 'dni2' | 'foto' | 'extra'): void {
     event.preventDefault();
     this.dragOver.update(d => ({ ...d, [slot]: false }));
   }
 
-  onFileDropped(event: DragEvent, slot: 'dni1' | 'dni2' | 'foto'): void {
+  onFileDropped(event: DragEvent, slot: 'dni1' | 'dni2' | 'foto' | 'extra'): void {
     event.preventDefault();
     this.dragOver.update(d => ({ ...d, [slot]: false }));
     if (event.dataTransfer && event.dataTransfer.files.length > 0) {
@@ -356,7 +373,7 @@ export class ModalDocumentosComponent implements OnDestroy {
     }
   }
 
-  onFileSelected(event: Event, slot: 'dni1' | 'dni2' | 'foto'): void {
+  onFileSelected(event: Event, slot: 'dni1' | 'dni2' | 'foto' | 'extra'): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files.length > 0) {
       this.uploadFile(input.files[0], slot);
@@ -387,11 +404,11 @@ export class ModalDocumentosComponent implements OnDestroy {
     return !!file.mimeType?.startsWith('image/') || /\.(jpg|jpeg|png|webp|gif|svg)$/i.test(file.name);
   }
 
-  getImageUrl(slot: 'dni1' | 'dni2' | 'foto'): string | null {
+  getImageUrl(slot: 'dni1' | 'dni2' | 'foto' | 'extra'): string | null {
     const local = this.localPreviews()[slot];
     if (local) return local;
 
-    const file = slot === 'dni1' ? this.dni1() : slot === 'dni2' ? this.dni2() : this.foto();
+    const file = slot === 'dni1' ? this.dni1() : slot === 'dni2' ? this.dni2() : slot === 'foto' ? this.foto() : this.extra();
     if (file) {
       if (file.id.startsWith('mock-file-') || file.url.includes('mock-file-id-for-preview')) {
         return 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100%" height="100%" fill="%23cbd5e1"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" font-family="sans-serif" font-size="10" font-weight="600" fill="%23475569">Vista Previa</text></svg>';
@@ -402,9 +419,9 @@ export class ModalDocumentosComponent implements OnDestroy {
   }
 
   cargarPreviews(miembroId: number): void {
-    const slots: ('dni1' | 'dni2' | 'foto')[] = ['dni1', 'dni2', 'foto'];
+    const slots: ('dni1' | 'dni2' | 'foto' | 'extra')[] = ['dni1', 'dni2', 'foto', 'extra'];
     const imageSlots = slots.filter(slot => {
-      const file = slot === 'dni1' ? this.dni1() : slot === 'dni2' ? this.dni2() : this.foto();
+      const file = slot === 'dni1' ? this.dni1() : slot === 'dni2' ? this.dni2() : slot === 'foto' ? this.foto() : this.extra();
       return file && this.isImage(file) && !file.id.startsWith('mock-file-') && !this.localPreviews()[slot];
     });
 
@@ -413,7 +430,7 @@ export class ModalDocumentosComponent implements OnDestroy {
     this.miembroService.getGoogleAccessToken(miembroId).subscribe({
       next: ({ accessToken }) => {
         for (const slot of imageSlots) {
-          const file = slot === 'dni1' ? this.dni1() : slot === 'dni2' ? this.dni2() : this.foto();
+          const file = slot === 'dni1' ? this.dni1() : slot === 'dni2' ? this.dni2() : slot === 'foto' ? this.foto() : this.extra();
           if (file) {
             this.miembroService.downloadFileFromGoogle(file.id, accessToken).subscribe({
               next: (blob) => {

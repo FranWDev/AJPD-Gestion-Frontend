@@ -86,6 +86,20 @@
               />
             </div>
 
+            <div class="form-field">
+              <label class="form-label" for="f-pronombre">Pronombre</label>
+              <select
+                id="f-pronombre"
+                class="form-input"
+                (change)="updateField('pronombre', $any($event.target).value)"
+              >
+                <option value="" [selected]="!form().pronombre">No especificado</option>
+                @for (opt of pronombresOptions; track opt.value) {
+                  <option [value]="opt.value" [selected]="form().pronombre === opt.value">{{ opt.label }}</option>
+                }
+              </select>
+            </div>
+
             <div class="form-field form-field--full">
               <label class="form-label" for="f-dom">Domicilio</label>
               <input

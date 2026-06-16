@@ -113,11 +113,16 @@
   color: var(--color-text-secondary);
 }
 
-/* Slots layout */
 .document-slots-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: 1fr;
   gap: 20px;
+}
+
+@media (min-width: 601px) {
+  .document-slots-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .slot-card {
@@ -130,6 +135,7 @@
   min-height: 240px;
   transition: border-color var(--transition-normal), box-shadow var(--transition-normal);
   position: relative;
+  min-width: 0;
 }
 
 .slot-card:hover {
@@ -225,6 +231,9 @@
   padding: 16px;
   gap: 12px;
   text-align: center;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .file-icon {
@@ -254,6 +263,8 @@
   gap: 4px;
   width: 100%;
   margin-top: 8px;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .file-name {

@@ -31,6 +31,7 @@ export interface MiembroResponse {
   fechaAlta?: string;
   observaciones?: string;
   fechaBaja?: string | null;
+  pronombre?: string;
   historialCargos: HistorialCargoItem[];
 }
 
@@ -48,6 +49,7 @@ export interface MiembroRequest {
   fechaNacimiento?: string | null;
   fechaAlta?: string | null;
   observaciones?: string;
+  pronombre?: string;
 }
 
 export interface MiembroFiltros {

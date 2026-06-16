@@ -43,6 +43,13 @@ export class ModalMiembroComponent {
     'Otra'
   ];
 
+  protected readonly pronombresOptions = [
+    { value: 'Él', label: 'Él (él/lo/le)' },
+    { value: 'Ella', label: 'Ella (ella/la/le)' },
+    { value: 'Elle', label: 'Elle (elle/lo/le)' },
+    { value: 'Otro', label: 'Otro / No especificado' }
+  ];
+
   protected readonly nacionalidad1 = signal<string>('');
   protected readonly nacionalidad2 = signal<string>('');
 
@@ -60,6 +67,7 @@ export class ModalMiembroComponent {
     fechaNacimiento: null,
     fechaAlta: null,
     observaciones: '',
+    pronombre: '',
   });
 
   constructor() {
@@ -85,6 +93,7 @@ export class ModalMiembroComponent {
             fechaNacimiento: m.fechaNacimiento ?? null,
             fechaAlta: m.fechaAlta ?? null,
             observaciones: m.observaciones ?? '',
+            pronombre: m.pronombre ?? '',
           });
         } else {
           this.nacionalidad1.set('');
@@ -103,6 +112,7 @@ export class ModalMiembroComponent {
             fechaNacimiento: null,
             fechaAlta: null,
             observaciones: '',
+            pronombre: '',
           });
         }
         this.errorGuardar.set(null);

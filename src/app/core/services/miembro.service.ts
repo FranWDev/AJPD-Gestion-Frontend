@@ -98,11 +98,15 @@ export class MiembroService {
     );
   }
 
-  getDocumentos(miembroId: number, tipo: 'DNI' | 'FOTO'): Observable<DriveFileDto[]> {
+  getAllDocumentos(miembroId: number): Observable<{ dni: DriveFileDto[]; foto: DriveFileDto[]; extra: DriveFileDto[] }> {
+    return this.http.get<{ dni: DriveFileDto[]; foto: DriveFileDto[]; extra: DriveFileDto[] }>(`${this.base}/${miembroId}/documentos`);
+  }
+
+  getDocumentos(miembroId: number, tipo: 'DNI' | 'FOTO' | 'EXTRA'): Observable<DriveFileDto[]> {
     return this.http.get<DriveFileDto[]>(`${this.base}/${miembroId}/documentos/${tipo}`);
   }
 
-  getUploadUrl(miembroId: number, tipo: 'DNI' | 'FOTO', fileName: string, contentType: string): Observable<{ uploadUrl: string }> {
+  getUploadUrl(miembroId: number, tipo: 'DNI' | 'FOTO' | 'EXTRA', fileName: string, contentType: string): Observable<{ uploadUrl: string }> {
     const params = new HttpParams()
       .set('fileName', fileName)
       .set('contentType', contentType);
