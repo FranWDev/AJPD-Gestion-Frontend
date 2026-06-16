@@ -1,0 +1,271 @@
+<div class="maestros-page">
+
+  <div class="page-header">
+    <button class="btn btn-primary" type="button" (click)="nuevo()" id="permisos-nuevo">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      Añadir usuario
+    </button>
+  </div>
+
+  <div class="filters-card" style="margin-bottom: 20px;">
+    <div class="filters-header">
+      <div class="filter-search">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+        </svg>
+        <input
+          id="permisos-buscar"
+          class="filter-input filter-input--search"
+          type="search"
+          placeholder="Buscar por correo..."
+          [value]="query()"
+          (input)="onBuscarChange($any($event.target).value)"
+        />
+      </div>
+
+      <div class="filters-header-actions">
+        <div class="filter-field filter-field--ordenar">
+          <label for="permisos-ordenar" class="filter-label">Ordenar por</label>
+          <select id="permisos-ordenar" class="filter-input filter-select"
+            (change)="ordenarPorMobile($any($event.target).value)">
+            <option value="email,asc" [selected]="sort().campo === 'email' && sort().direccion === 'asc'">Correo (A-Z)</option>
+            <option value="email,desc" [selected]="sort().campo === 'email' && sort().direccion === 'desc'">Correo (Z-A)</option>
+          </select>
+        </div>
+
+        @if (query()) {
+          <button class="btn btn-ghost btn-sm btn-clear" type="button" (click)="limpiarFiltros()" id="permisos-limpiar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+            Limpiar búsqueda
+          </button>
+        }
+      </div>
+    </div>
+  </div>
+
+  @if (cargando()) {
+    <app-skeleton variant="maestro" [rows]="tamano()" />
+  } @else {
+    @if (permissions().length === 0) {
+      <div class="state-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+        </svg>
+        <p>No se encontraron configuraciones de permisos con los criterios actuales.</p>
+        @if (query()) {
+          <button class="btn btn-ghost" (click)="limpiarFiltros()">Limpiar búsqueda</button>
+        } @else {
+          <button class="btn btn-ghost" (click)="nuevo()">Configurar primer usuario</button>
+        }
+      </div>
+    } @else {
+      <div class="table-wrapper">
+        <table class="maestros-table">
+          <thead>
+            <tr>
+              <th class="th-sortable" (click)="ordenarPor('email')">
+                Correo Electrónico
+                <span class="sort-icon" [class.active]="iconoSort('email')">
+                  @if (iconoSort('email') === 'asc') { ↑ }
+                  @else if (iconoSort('email') === 'desc') { ↓ }
+                  @else { ↕ }
+                </span>
+              </th>
+              <th>Administrar Permisos</th>
+              <th>Gestión Organización</th>
+              <th>Gestión Web</th>
+              <th>Gestión Finanzas</th>
+              <th class="th-acciones">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (p of permissions(); track p.id) {
+              <tr>
+                <td class="td-email" style="color: var(--color-text-primary)">{{ p.email }}</td>
+                <td class="td-bool">
+                  <span class="badge" [class.badge-active]="p.canManagePermissions">
+                    {{ p.canManagePermissions ? 'Sí' : 'No' }}
+                  </span>
+                </td>
+                <td class="td-bool">
+                  <span class="badge" [class.badge-active]="p.canManageOrganization">
+                    {{ p.canManageOrganization ? 'Sí' : 'No' }}
+                  </span>
+                </td>
+                <td class="td-bool">
+                  <span class="badge" [class.badge-active]="p.canManageWeb">
+                    {{ p.canManageWeb ? 'Sí' : 'No' }}
+                  </span>
+                </td>
+                <td class="td-bool">
+                  <span class="badge" [class.badge-active]="p.canManageFinances">
+                    {{ p.canManageFinances ? 'Sí' : 'No' }}
+                  </span>
+                </td>
+                <td class="td-acciones">
+                  <button class="action-btn" type="button" (click)="editar(p)" title="Editar permisos">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Z" />
+                    </svg>
+                  </button>
+                  <button class="action-btn action-btn--danger" type="button" (click)="eliminar(p)" title="Eliminar usuario">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cards-list">
+        @for (p of permissions(); track p.id) {
+          <div class="maestro-card">
+            <div class="card-info">
+              <p class="card-name">{{ p.email }}</p>
+              <div class="card-badges" style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;">
+                <span class="badge" [class.badge-active]="p.canManagePermissions">Permisos</span>
+                <span class="badge" [class.badge-active]="p.canManageOrganization">Organización</span>
+                <span class="badge" [class.badge-active]="p.canManageWeb">Web</span>
+                <span class="badge" [class.badge-active]="p.canManageFinances">Finanzas</span>
+              </div>
+            </div>
+            <div class="card-actions">
+              <button class="btn btn-ghost btn-sm" (click)="editar(p)">Editar</button>
+              <button class="btn btn-ghost btn-sm" (click)="eliminar(p)">Eliminar</button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="pagination" style="margin-top: 16px;">
+        <div class="pagination-info">
+          Mostrando {{ permissions().length }} de {{ totalElementos() }} usuarios
+        </div>
+        <div class="pagination-controls">
+          <button
+            class="page-btn"
+            type="button"
+            [disabled]="pagina() === 0"
+            (click)="irAPagina(pagina() - 1)"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+            </svg>
+          </button>
+
+          @for (p of paginas(); track $index) {
+            @if (p === '...') {
+              <span class="page-ellipsis">...</span>
+            } @else {
+              <button
+                class="page-btn"
+                [class.page-btn--active]="p === pagina()"
+                type="button"
+                (click)="irAPagina(p)"
+              >{{ p + 1 }}</button>
+            }
+          }
+
+          <button
+            class="page-btn"
+            type="button"
+            [disabled]="pagina() === totalPaginas() - 1 || totalPaginas() === 0"
+            (click)="irAPagina(pagina() + 1)"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="pagination-size">
+          <select
+            class="filter-input filter-select"
+            (change)="cambiarTamano(+$any($event.target).value)"
+          >
+            <option [value]="10" [selected]="tamano() === 10">10 por pag.</option>
+            <option [value]="25" [selected]="tamano() === 25">25 por pag.</option>
+            <option [value]="50" [selected]="tamano() === 50">50 por pag.</option>
+          </select>
+        </div>
+      </div>
+    }
+  }
+
+  @if (mostrarModal()) {
+    <div class="modal-backdrop" [class.modal-backdrop--closing]="isClosing()" (click)="cerrarModal()"></div>
+    <div class="modal-container" (click)="cerrarModal()">
+      <div class="modal-box" [class.modal-box--closing]="isClosing()" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+          <h2 class="modal-title">{{ editandoId() !== null ? 'Editar permisos de usuario' : 'Añadir configuración de permisos' }}</h2>
+          <button class="modal-close" (click)="cerrarModal()" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-form">
+          @if (formError()) {
+            <div class="form-error">
+              {{ formError() }}
+            </div>
+          }
+
+          <div class="form-field">
+            <label class="form-label" for="permiso-email">Correo Electrónico</label>
+            <div class="email-input-wrapper" [class.has-suffix]="editandoId() === null">
+              <input
+                id="permiso-email"
+                type="text"
+                class="form-input"
+                [placeholder]="editandoId() !== null ? 'nombre.apellido@proyectodubini.org' : 'nombre.apellido'"
+                [ngModel]="formEmail()"
+                (ngModelChange)="onEmailInput($event)"
+                [disabled]="editandoId() !== null"
+              />
+              @if (editandoId() === null) {
+                <span class="email-domain-suffix">@proyectodubini.org</span>
+              }
+            </div>
+          </div>
+
+          <div class="checkbox-group">
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="formCanManagePermissions" />
+              <span><strong>Administrar Permisos:</strong> Permite configurar permisos de otros usuarios y gestionar la seguridad de la app.</span>
+            </label>
+
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="formCanManageOrganization" />
+              <span><strong>Gestión de Organización:</strong> Permite gestionar miembros, historial y datos maestros (centros, cargos).</span>
+            </label>
+
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="formCanManageWeb" />
+              <span><strong>Gestión de Contenidos:</strong> Permite modificar noticias, imágenes hero y slider web.</span>
+            </label>
+
+            <label class="checkbox-label">
+              <input type="checkbox" [(ngModel)]="formCanManageFinances" />
+              <span><strong>Gestión de Finanzas:</strong> Permite administrar presupuestos, cuotas y tesorería.</span>
+            </label>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn btn-ghost" (click)="cerrarModal()" [disabled]="guardando()">Cancelar</button>
+          <button class="btn btn-primary" (click)="guardar()" [disabled]="guardando()">
+            {{ guardando() ? 'Guardando...' : 'Guardar' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+</div>

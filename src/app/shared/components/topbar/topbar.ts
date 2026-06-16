@@ -40,6 +40,7 @@ export class TopBarComponent {
     if (url.includes('/maestros/cargos')) return 'Cargos';
     if (url.includes('/maestros/centros')) return 'Centros';
     if (url.includes('/historial')) return 'Historial';
+    if (url.includes('/permisos')) return 'Permisos';
     return '';
   }
 

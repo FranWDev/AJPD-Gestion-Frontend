@@ -1,0 +1,94 @@
+:host {
+  display: block;
+}
+
+.maestros-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.email-input-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  width: 100%;
+}
+
+.email-input-wrapper.has-suffix .form-input {
+  flex: 1;
+  padding-right: 175px;
+}
+
+.email-domain-suffix {
+  position: absolute;
+  right: 14px;
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.8;
+}
+
+.td-bool {
+  text-align: center;
+}
+
+/* Checkbox group styling conforming to dark mode variables */
+.checkbox-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  cursor: pointer;
+  accent-color: var(--color-blue-medium);
+}
+
+.checkbox-label span {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+
+.checkbox-label span strong {
+  color: var(--color-text-primary);
+  display: block;
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-align: center;
+  background-color: var(--color-surface-hover);
+  color: var(--color-text-secondary);
+  transition: background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.badge-active {
+  background-color: var(--color-success-bg) !important;
+  color: var(--color-success-text) !important;
+}
+
+@media (max-width: 767px) {
+  #permisos-nuevo {
+    width: 100%;
+    justify-content: center;
+  }
+}

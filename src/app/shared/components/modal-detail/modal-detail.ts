@@ -39,7 +39,7 @@ export class ModalDetailComponent {
     const m = this.svc.miembro();
     if (!m) return;
     this.svc.cerrar();
-    this.router.navigate(['/historial'], { queryParams: { miembroId: m.id } });
+    this.router.navigate(['/organizacion/historial'], { queryParams: { miembroId: m.id } });
   }
 
   protected darDeBaja(): void {

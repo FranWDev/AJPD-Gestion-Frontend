@@ -228,6 +228,6 @@ export class HistorialComponent implements OnInit, OnDestroy {
   }
 
   volverAMiembros(): void {
-    this.router.navigate(['/miembros']);
+    this.router.navigate(['/organizacion/miembros']);
   }
 }

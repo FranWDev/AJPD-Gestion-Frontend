@@ -13,28 +13,43 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'miembros',
+        redirectTo: 'organizacion/miembros',
         pathMatch: 'full',
       },
       {
-        path: 'miembros',
-        loadComponent: () =>
-          import('./features/miembros/miembros').then(m => m.MiembrosComponent),
+        path: 'organizacion',
+        children: [
+          {
+            path: 'miembros',
+            loadComponent: () =>
+              import('./features/miembros/miembros').then(m => m.MiembrosComponent),
+          },
+          {
+            path: 'historial',
+            loadComponent: () =>
+              import('./features/historial/historial').then(m => m.HistorialComponent),
+          },
+          {
+            path: 'maestros/centros',
+            loadComponent: () =>
+              import('./features/maestros/centros/centros').then(m => m.CentrosComponent),
+          },
+          {
+            path: 'maestros/cargos',
+            loadComponent: () =>
+              import('./features/maestros/cargos/cargos').then(m => m.CargosComponent),
+          },
+        ]
       },
       {
-        path: 'historial',
-        loadComponent: () =>
-          import('./features/historial/historial').then(m => m.HistorialComponent),
-      },
-      {
-        path: 'maestros/centros',
-        loadComponent: () =>
-          import('./features/maestros/centros/centros').then(m => m.CentrosComponent),
-      },
-      {
-        path: 'maestros/cargos',
-        loadComponent: () =>
-          import('./features/maestros/cargos/cargos').then(m => m.CargosComponent),
+        path: 'seguridad',
+        children: [
+          {
+            path: 'permisos',
+            loadComponent: () =>
+              import('./features/permisos/permisos').then(m => m.PermisosComponent),
+          }
+        ]
       },
       {
         path: 'web',

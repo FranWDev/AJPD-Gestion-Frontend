@@ -26,8 +26,17 @@ export class LoginComponent implements OnInit {
       if (token) {
         this.isLoading.set(true);
         this.authService.saveToken(token);
-        this.isLoading.set(false);
-        this.router.navigate(['/']);
+        this.authService.loadUserPermissions().subscribe({
+          next: () => {
+            this.isLoading.set(false);
+            this.router.navigate(['/']);
+          },
+          error: () => {
+            this.isLoading.set(false);
+            this.errorMessage.set('Error al obtener permisos del usuario.');
+            this.authService.logout();
+          }
+        });
       } else if (error) {
         this.errorMessage.set(error);
       }

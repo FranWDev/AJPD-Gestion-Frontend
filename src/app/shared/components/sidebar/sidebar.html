@@ -6,7 +6,7 @@
   </div>
 
   <div class="sidebar-nav">
-    @for (section of navSections; track section.title) {
+    @for (section of navSections(); track section.title) {
       <div class="nav-section-title">{{ section.title }}</div>
 
       @for (item of section.items; track item.label) {

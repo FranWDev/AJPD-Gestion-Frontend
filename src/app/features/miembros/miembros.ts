@@ -253,7 +253,7 @@ export class MiembrosComponent implements OnInit, OnDestroy {
   }
 
   verHistorial(miembro: MiembroResponse): void {
-    this.router.navigate(['/historial'], { queryParams: { miembroId: miembro.id } });
+    this.router.navigate(['/organizacion/historial'], { queryParams: { miembroId: miembro.id } });
   }
 
   darDeBaja(miembro: MiembroResponse): void {
