@@ -1,4 +1,12 @@
 
+.modal-backdrop {
+  z-index: 2000;
+}
+
+.modal-container {
+  z-index: 2001;
+}
+
 .modal-icon {
   width: 56px;
   height: 56px;

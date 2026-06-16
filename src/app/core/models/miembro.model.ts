@@ -100,3 +100,13 @@ export interface CargoHistorialFiltros {
   fechaFinHasta?: string;
   buscar?: string;
 }
+
+export interface DriveFileDto {
+  id: string;
+  name: string;
+  url: string;
+  size: number;
+  mimeType: string;
+  thumbnailUrl?: string;
+}
+
