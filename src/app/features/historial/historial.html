@@ -7,11 +7,11 @@
     <div class="page-header">
       <div>
         <div class="header-back">
-          <button class="btn-back" (click)="volverAMiembros()" type="button" title="Volver a miembros">
+          <button class="btn-back" (click)="volverAlHistorial()" type="button" title="Volver al historial de cargos">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
             </svg>
-            Volver a miembros
+            Volver al historial de cargos
           </button>
         </div>
       </div>
@@ -231,7 +231,7 @@
               @for (item of datosGlobal()!.content; track item.id) {
                 <tr>
                   <td class="td-miembro">
-                    <a [routerLink]="['/historial']" [queryParams]="{ miembroId: item.miembroId }" class="miembro-link">
+                    <a [routerLink]="['/organizacion/historial']" [queryParams]="{ miembroId: item.miembroId }" class="miembro-link">
                       {{ item.miembroNombre }}
                     </a>
                     @if (item.miembroNif) {
@@ -271,7 +271,7 @@
             <div class="history-card">
               <div class="card-header">
                 <div>
-                  <a [routerLink]="['/historial']" [queryParams]="{ miembroId: item.miembroId }" class="card-miembro">
+                  <a [routerLink]="['/organizacion/historial']" [queryParams]="{ miembroId: item.miembroId }" class="card-miembro">
                     {{ item.miembroNombre }}
                   </a>
                   <p class="card-cargo">{{ item.cargoNombre }}</p>

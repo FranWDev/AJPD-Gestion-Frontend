@@ -227,7 +227,7 @@ export class HistorialComponent implements OnInit, OnDestroy {
     });
   }
 
-  volverAMiembros(): void {
-    this.router.navigate(['/organizacion/miembros']);
+  volverAlHistorial(): void {
+    this.router.navigate(['/organizacion/historial']);
   }
 }
